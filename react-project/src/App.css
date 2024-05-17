@@ -305,3 +305,12 @@ svg {
 }
 
 
+/* Frist */
+.first-container {
+  display: flex;
+}
+
+.btn-join, .btn-login {
+  width: 100px;
+  color: black;
+}
