@@ -1,0 +1,31 @@
+ sessionStorage : 브라우저 세션 안에 데이터를 저장하는 공간
+    - 새로고침을 해도 데이터가 유지된다. 
+    - 브라우저 혹은 탭이 닫히면 데이터가 삭제된다. 
+    - 브라우저 안에 데이터를 저장하는 것은 보안상의 위험이 따른다. 다만, 보다 편리하게 데이터를 저장할 수 있음 
+          
+    ※ 만약 브라우저를 닫아도 유지하고 싶은 정보가 있다면 localStorage를 이용 
+
+
+[문법]
+1) 저장 
+    sessionStorage.setItem('속성', '값'); 
+    
+    Q. 만약 객체를 저장하고 싶다면?
+    sessionStorage.setItem('속성', JSON.stringify(객체)); 
+
+
+2) 가져오기 
+    sessionStorage.getItem('속성')
+    
+    Q. 만약 객체 형태를 가져오고싶다면? 
+    JSON.parse(sessionStorage.getItem('속성'))
+
+3) 삭제하기
+
+    3-1) sessionStorage.removeItem('속성')
+    3-2) sessionStorage.clear() => 전체삭제
+
+
+** 내 눈으로 직접 sessionStorage 보는 방법
+F12 -> Application -> sessionStorage 화살표 -> 우리 주소 
+                
