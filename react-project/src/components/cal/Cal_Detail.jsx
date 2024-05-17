@@ -5,5 +5,5 @@ const Cal_Detail = () => {
     <div>Cal_Detail</div>
   )
 }
-
+// 추가
 export default Cal_Detail
