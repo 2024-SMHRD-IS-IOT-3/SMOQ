@@ -1,5 +1,61 @@
+@import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
+
+/* 모바일 화면 */
+@media (max-width: 480px) {
+  .main-task {
+    gap: 5px;
+  }
+
+  .task {
+    width: 100%;
+  }
+
+  .p {
+    padding-right: 5px;
+  }
+
+  .quit_percent {
+    padding-right: 5px;
+  }
+
+  .content {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .bar_ex {
+    margin-left: 0;
+    margin-right: 0;
+    padding-top: 10px;
+  }
+
+  .total_box {
+    width: 100%;
+    max-width: 250px;
+    height: 110px;
+    padding: 5px;
+  }
+
+
+  .progress-timeline {
+    margin-right: 10px;
+    padding-top: 0px;
+  }
+
+  .line {
+    width: 2px; 
+    height: 100px; 
+    background-color: rgb(124, 124, 124); 
+  }
+
+  #root > div > div > div.footer > nav > div > div > a:nth-child(1), #root > div > div > div.footer > nav > div > div > a:nth-child(2), #root > div > div > div.footer > nav > div > div > a:nth-child(3), #root > div > div > div.footer > nav > div > div > a:nth-child(4), #root > div > div > div.footer > nav > div > div > a:nth-child(5) {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
 * { 
-  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family:'Spoqa Han Sans Neo', 'sans-serif';;
 }
 
 /* progress-timeline */
@@ -73,9 +129,10 @@
   text-align: center;
   display: inline;
   /*       상   우   하   좌 */
-  margin: 30px 70px 0px 70px;
-  padding: 10px 0px 0px 20px;
+  margin: 0px 70px 0px 90px;
   align-items: center;
+  background-color: white;
+  border: none;
 }
 
 .notibell {
@@ -227,7 +284,6 @@ svg {
   display: flex;
   justify-content: space-between;
   padding-top: 20px;
-  margin: 0 auto;
   flex-direction: row; 
   justify-content: center; 
   align-items: flex-start;
@@ -308,9 +364,117 @@ svg {
 /* Frist */
 .first-container {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f5f5f5; /* 배경 색상 */
+  padding-bottom: 150px;
+}
+
+.first-title h1 {
+  font-size: 3.5rem;
+  margin-bottom: 5rem;
+  color: #333;
+  font-weight: bold;
 }
 
 .btn-join, .btn-login {
   width: 100px;
-  color: black;
+  margin: 10px 0;
+  padding: 10px 0;
+  font-size: 1.2rem;
+}
+
+.btn-join {
+  background-color: #50a5f0 !important;
+  border-color: #50a5f0 !important;
+  font-weight: bold !important;
+}
+
+.btn-login {
+  background-color: #50a5f0 !important;
+  border-color: #50a5f0 !important;
+  font-weight: bold !important;
+}
+
+.first-title {
+  font-size: 1.8rem;
+  margin-bottom: 3.5rem;
+  color: #333;
+  font-weight: bold;
+}
+
+.div-first-title {
+  text-align: center;
+}
+
+.first-options {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.first-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  background-color: #e0e0e0; 
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 10px;
+}
+
+.first-option:hover {
+  background-color: #d0d0d0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.icon>path {
+  size: 60rem !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 6rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 70px;
+
+}
+
+.first-option-select {
+  text-align: center;
+}
+
+.first-option-select span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.joinemail {
+  font-size: 18px;
+}
+
+.join-email{
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+.sendbtn {
+  border: none;
+  background-color:  rgb(221, 221, 221);
+  border-radius: 5px;
+  padding: 7px;
+  color: #414141;
+}
+
+button.setbtn:hover {
+  background-color: #21f121;
 }
