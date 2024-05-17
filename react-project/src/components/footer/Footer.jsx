@@ -32,7 +32,7 @@ function Footer() {
               <span>장소</span>
             </div>
           </Nav.Link>
-          <Nav.Link href="/" className={getNavLinkClass('/')}>
+          <Nav.Link href="/main" className={getNavLinkClass('/')}>
             <div className="nav-item">
               <HiMiniHome className="nav-icon" />
               <span>메인</span>

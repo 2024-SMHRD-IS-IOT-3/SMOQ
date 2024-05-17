@@ -27,7 +27,8 @@ function App() {
         <Link to='/'></Link>
       </h1>
       <Routes>
-        <Route path='/' element={<Main/>}></Route>
+        <Route path='/' element={<First/>}></Route>
+        <Route path='/main' element={<Main/>}></Route>
         <Route path='/Cal_main' element={<Cal_main/>}></Route>
         <Route path='/Cal_Detail' element={<Cal_Detail/>}></Route>
       </Routes>
