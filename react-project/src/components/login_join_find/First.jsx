@@ -2,10 +2,15 @@ import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
 import { BsFillPersonFill } from "react-icons/bs";
 import { FaKey } from "react-icons/fa6";
-
+import { useNavigate } from 'react-router-dom';
+import axios from '../../axios';
 
 const First = () => {
   const [view, setView] = useState('main');
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState('personal');
 
   const handleJoinClick = () => {
     setView('join');
@@ -18,15 +23,40 @@ const First = () => {
   };
 
   const handleUserJoin = () => {
-    setView('selectedjoin')
-    window.history.pushState({ view: 'selectedjoin' }, 'selectedjoin', window.location.pathname)
-  }
+    navigate('/join_first/user');
+  };
 
-  const handleUserLogin = () => {
-    setView('selectedlogin')
-    window.history.pushState({ view: 'selectedlogin' }, 'selectedlogin', window.location.pathname)
-  }
+  const handleManagerJoin = () => {
+    navigate('/join_first/manager');
+  };
+
+  const handleFindID = () => {
+    navigate('/find_select', { state: { view: 'email' } });
+  };
   
+  const handleFindPW = () => {
+    navigate('/find_select', { state: { view: 'password' } });
+  };
+
+  const handleUserTypeChange = (e) => {
+    setUserType(e.target.value);
+  };
+
+  const handleLogin = () => {
+    axios.post('/login', { email, password, userType })
+      .then(res => {
+        if (res.data.success) {
+          sessionStorage.setItem('email', res.data.email); // 세션 스토리지에 이메일 저장
+          navigate('/main'); // 메인 페이지로 이동
+        } else {
+          alert(res.data.message);
+        }
+      })
+      .catch(error => {
+        console.error('로그인 실패:', error);
+        alert('로그인 실패');
+      });
+  };
 
   useEffect(() => {
     const handlePopState = (event) => {
@@ -67,7 +97,7 @@ const First = () => {
               </div>
               <span>사용자 회원가입</span>
             </div>
-            <div className='first-option-select' onClick={handleUserJoin}>
+            <div className='first-option-select' onClick={handleManagerJoin}>
               <div className='first-option'>
                 <FaKey className='icon' />
               </div>
@@ -81,49 +111,41 @@ const First = () => {
           <div className='div-first-title'>
             <h2 className='first-title'>로그인</h2>
           </div>
-          <div className='first-options'>
-            <div className='first-option-select' onClick={handleUserLogin}>
-              <div className='first-option'>
-                <BsFillPersonFill className='icon' />
-              </div>
-              <span>사용자 로그인</span>
+          <div className='radio'>
+            <div className='radio-login'>
+              <input type="radio" name='login' value='personal' checked={userType === 'personal'} onChange={handleUserTypeChange} />
+              <p>개인 사용자</p>
             </div>
-            <div className='first-option-select' onClick={handleUserLogin}>
-              <div className='first-option'>
-                <FaKey className='icon' />
-              </div>
-              <span>관리자 로그인</span>
+            <div className='radio-login'>
+              <input type="radio" name='login' value='manager' checked={userType === 'manager'} onChange={handleUserTypeChange}/>
+              <p>관리자</p>
+            </div>
+          </div>
+          <div className='firstlogininput'>
+            <div className='loginicon'>
+              <BsFillPersonFill className='login' />
+            </div>
+            <input type="email" className='inputlogin' placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)}/>
+          </div>
+          <div className='firstlogininput'>
+          <div className='loginicon'>
+            <FaKey className='login' />
+          </div>
+            <input type="password" className='inputlogin' placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)}/>
+          </div>
+          <button type='submit' className='firstbtn-login' onClick={handleLogin}>로그인</button>
+          <div className='loginbtn'>
+            <div className='login-findbtn'>
+              <button className='login-find' onClick={handleFindID}>이메일 찾기</button>
+              <button className='login-find' onClick={handleFindPW}>패스워드 찾기</button>
+            </div>
+            <div className='loginline'></div>
+            <div className='login-joinbtn-box'>
+              <button className='login-joinbtn' onClick={handleJoinClick}>회원가입</button>
             </div>
           </div>
         </div>
       )}
-      {view === 'selectedjoin' && (
-        <div className='first-container'>
-          <div className='div-first-title'>
-            <h2 className='first-title'>회원가입</h2>
-          </div>
-          <h3 className='joinemail'>이메일을 입력해주세요</h3>
-          <input type="email" id='eamail' placeholder='email' autofocus/>
-          <p className='join-email'>입력하신 이메일은 아이디로 사용됩니다.</p>
-          <button className='sendbtn'>이메일로 링크 발송</button>
-        </div>
-      )}
-
-      {view === 'selectedlogin' && (
-        <div>
-          <h2>로그인</h2>
-          <form action="">
-              사용자<input type="radio" name='login' value="user"/>
-              관리자<input type="radio" name='login' value="manager"/>
-              <input type="email" />
-              <input type="password" />
-              <button type="submit">로그인</button>
-          </form>
-          <button>아이디 찾기</button>
-          <button>패스워드 찾기</button>
-        </div>
-      )}
-
     </div>
   );
 };

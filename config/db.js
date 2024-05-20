@@ -7,7 +7,7 @@ oracledb.initOracleClient({ libDir: 'C:/Users/smhrd/Desktop/instantclient' });
 const dbConfig = {
   user: 'cgi_24IS_IoT3_p2_4', 
   password: 'smhrd4', 
-  connectString: 'project-db-cgi.smhrd.com:1524/xe' 
+  connectString: 'project-db-cgi.smhrd.com:1524/xe'
 }
 
 async function connectToOracle() {

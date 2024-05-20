@@ -64,7 +64,7 @@ const Main = () => {
     axios.post('/selectsmokingcnt', {})
     .then(res => {
       const cnt = res.data <= 0 ? Math.abs(res.data) : res.data;
-      setCntSmoke(cnt);
+      setCntSmoke(cnt.toFixed(1));
       setHow(cnt <= 0 ? '더 피움' : '적게 핌');
     })
     .catch(err => {

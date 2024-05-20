@@ -1,14 +1,18 @@
 import './App.css';
-
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-calendar/dist/Calendar.css';
 
-import {Routes, Route, Link} from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import First from './components/login_join_find/First';
 import Main from './components/main/Main';
-import Cal_main from './components/cal/Cal_main';
-import Graph from './components/cal/Graph'
-import Cal_Detail from './components/cal/Cal_Detail';
+import Calmain from './components/cal/Cal_main';
+import Graph from './components/cal/Graph';
+import CalDetail from './components/cal/Cal_Detail';
+import Joinfirst from './components/login_join_find/Join_first';
+import Join from './components/login_join_find/Join';
+import Findselect from './components/login_join_find/Find_select';
+import Findemail from './components/login_join_find/Find_email';
+import Findpw from './components/login_join_find/Find_pw';
 
 function App() {
   return (
@@ -17,17 +21,18 @@ function App() {
         <Link to='/'></Link>
       </h1>
       <Routes>
-        {/* first */}
-        <Route path='/' element={<First/>}></Route>
-
-        <Route path='/main' element={<Main/>}></Route>
-
-
-        <Route path='/Cal_main' element={<Cal_main/>}></Route>
-        <Route path='/Cal_Detail' element={<Cal_Detail/>}></Route>
+        <Route path='/' element={<First />} />
+        <Route path='/join_first/:userType' element={<Joinfirst />} />
+        <Route path='/join/:userTypeJoin' element={<Join />} />
+        <Route path='/find_select' element={<Findselect />} />
+        <Route path='/find_email/:userType' element={<Findemail />} />
+        <Route path='/find_pw/:userType' element={<Findpw />} />
+        <Route path='/main' element={<Main />} />
+        <Route path='/Cal_main' element={<Calmain />} />
+        <Route path='/Cal_Detail' element={<CalDetail />} />
       </Routes>
     </div>
-  )
+  );
 }
 
 export default App;
