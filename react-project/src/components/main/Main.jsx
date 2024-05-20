@@ -44,24 +44,24 @@ const Main = () => {
     smokingcntData();
   }, []);
 
-  /** 흡연 시간 조회 */
-  const smokingtimeData = () => {
+/** 흡연 시간 조회 */
+const smokingtimeData = () => {
+  axios.post('/selectsmokingtime', {
+    email: 'user1'
+  })
+  .then(res => {
+    let quitTimeStr;
+    if (res.data && res.data.length > 0) {
+      quitTimeStr = res.data[0].SMOKE_TIME;
+    } else {
+      // 데이터가 없으면 세션에 저장된 가입 날짜를 사용
+      quitTimeStr = sessionStorage.getItem('joined_at');
+    }
 
-    axios.post('/selectsmokingtime', {
-      email: 'user1'
-    })
-    .then(res => {
-      let quitTimeStr;
-      if (res.data && res.data.length > 0) {
-        quitTimeStr = res.data[0].SMOKE_TIME;
-      } else {
-        quitTimeStr = new Date().toISOString();
-      }
-
-      const quitTimeDate = new Date(quitTimeStr);
-      setQuitTime(quitTimeDate);
-    });
-  };
+    const quitTimeDate = new Date(quitTimeStr);
+    setQuitTime(quitTimeDate);
+  })
+};
 
   // 흡연 횟수 조회
   const smokingcntData = () => {
@@ -83,8 +83,7 @@ const Main = () => {
 
         // 현재 시간
         const now = new Date();
-
-        console.log("현재시간", now, "흡연시간", quitTime)
+        console.log("현재", now, "흡연", quitTime)
 
         // 현재 시간 년, 월, 일, 시, 분, 초
         const nowYear = now.getFullYear();
@@ -94,13 +93,17 @@ const Main = () => {
         const nowMinute = now.getMinutes();
         const nowSecond = now.getSeconds();
 
+        console.log(nowYear, nowMonth, nowDay, nowHour, nowMinute, nowSecond)
+
         // 흡연 시간 년, 월, 일, 시, 분, 초
-        const quitYear = quitTime.getUTCFullYear();
-        const quitMonth = quitTime.getUTCMonth() + 1;
-        const quitDay = quitTime.getUTCDate();
-        const quitHour = quitTime.getUTCHours();
-        const quitMinute = quitTime.getUTCMinutes();
-        const quitSecond = quitTime.getUTCSeconds();
+        const quitYear = quitTime.getFullYear();
+        const quitMonth = quitTime.getMonth() + 1;
+        const quitDay = quitTime.getDate();
+        const quitHour = quitTime.getHours();
+        const quitMinute = quitTime.getMinutes();
+        const quitSecond = quitTime.getSeconds();
+
+        console.log(quitYear, quitMonth, quitDay, quitHour, quitMinute, quitSecond)
 
         // 현재 시간 - 흡연 시간
         let diffYear = nowYear - quitYear;

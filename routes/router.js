@@ -29,16 +29,11 @@ router.post('/selectsmokingtime', async (req, res) => {
         oracledb.fetchAsString = [oracledb.DATE];
         const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
-        if (result.rows.length === 0) {
-            result.rows.push({ SMOKE_TIME: "0" });
-        } else {
+       
             result.rows.forEach(row => {
                 const dateStr = row.SMOKE_TIME; 
                 const date = new Date(dateStr);
-              });
-        }
-
-        
+              });  
 
       
         await connection.close();
@@ -191,7 +186,6 @@ router.post('/joinDatamanager', async (req, res) => {
       }
 });
 
-/** 로그인 */
 /** 로그인 */
 router.post('/login', async (req, res) => {
     const { email, password, userType } = req.body;
