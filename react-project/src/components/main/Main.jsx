@@ -83,7 +83,6 @@ const smokingtimeData = () => {
 
         // 현재 시간
         const now = new Date();
-        console.log("현재", now, "흡연", quitTime)
 
         // 현재 시간 년, 월, 일, 시, 분, 초
         const nowYear = now.getFullYear();
@@ -93,7 +92,6 @@ const smokingtimeData = () => {
         const nowMinute = now.getMinutes();
         const nowSecond = now.getSeconds();
 
-        console.log(nowYear, nowMonth, nowDay, nowHour, nowMinute, nowSecond)
 
         // 흡연 시간 년, 월, 일, 시, 분, 초
         const quitYear = quitTime.getFullYear();
@@ -103,7 +101,6 @@ const smokingtimeData = () => {
         const quitMinute = quitTime.getMinutes();
         const quitSecond = quitTime.getSeconds();
 
-        console.log(quitYear, quitMonth, quitDay, quitHour, quitMinute, quitSecond)
 
         // 현재 시간 - 흡연 시간
         let diffYear = nowYear - quitYear;
