@@ -47,6 +47,7 @@ const First = () => {
       .then(res => {
         if (res.data.success) {
           sessionStorage.setItem('email', res.data.email);
+          sessionStorage.setItem('joined_at', res.data.joined_at)
           if (userType === 'personal') {
             console.log('Navigating to /main'); // 추가된 로그
             navigate('/main');

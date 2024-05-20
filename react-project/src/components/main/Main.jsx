@@ -9,7 +9,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 const Main = () => {
   const [quitTime, setQuitTime] = useState(null); // 마지막 흡연 시간
   const [elapsedTime, setElapsedTime] = useState(''); // 금연 시간
-  const [cntSmoke, setCntSmoke] = useState(0); // 흡연 개수
+  const [cntSmoke, setCntSmoke] = useState(0) // 흐연 개수
 
   // 프로그레스바
   const [progress20Min, setProgress20Min] = useState(0);
@@ -23,7 +23,8 @@ const Main = () => {
   const [progress1Year, setProgress1Year] = useState(0);
   const [progress5Years, setProgress5Years] = useState(0);
 
-  const [how, setHow] = useState('');
+  const [how, setHow] = useState('')
+
 
   const [stepStatus, setStepStatus] = useState([
     { status: '' }, // 20분
@@ -45,6 +46,7 @@ const Main = () => {
 
   /** 흡연 시간 조회 */
   const smokingtimeData = () => {
+
     axios.post('/selectsmokingtime', {
       email: 'user1'
     })
@@ -53,20 +55,17 @@ const Main = () => {
       if (res.data && res.data.length > 0) {
         quitTimeStr = res.data[0].SMOKE_TIME;
       } else {
-        quitTimeStr = new Date();
+        quitTimeStr = new Date().toISOString();
       }
 
       const quitTimeDate = new Date(quitTimeStr);
       setQuitTime(quitTimeDate);
-
-    })
-    .catch(err => {
-      console.error('흡연 시간 조회 오류:', err);
     });
   };
 
   // 흡연 횟수 조회
   const smokingcntData = () => {
+
     axios.post('/selectsmokingcnt', {})
     .then(res => {
       const cnt = res.data <= 0 ? Math.abs(res.data) : res.data;
@@ -76,14 +75,16 @@ const Main = () => {
     .catch(err => {
       console.error('흡연 카운트 조회 오류:', err);
     });
-  };
+  }
 
   useEffect(() => {
     if (quitTime) {
       const updateElapsedTime = () => {
+
         // 현재 시간
         const now = new Date();
-        console.log("now", now, "quit", quitTime)
+
+        console.log("현재시간", now, "흡연시간", quitTime)
 
         // 현재 시간 년, 월, 일, 시, 분, 초
         const nowYear = now.getFullYear();
@@ -197,11 +198,12 @@ const Main = () => {
         setStepStatus(newStepStatus);
       };
 
-      updateElapsedTime();
+      updateElapsedTime(); 
 
-      const intervalId = setInterval(updateElapsedTime, 1000);
+      const intervalId = setInterval(updateElapsedTime, 1000); 
 
-      return () => clearInterval(intervalId);
+      return () => clearInterval(intervalId); 
+
     }
   }, [quitTime]);
 

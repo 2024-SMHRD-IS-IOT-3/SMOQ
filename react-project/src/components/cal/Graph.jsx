@@ -20,7 +20,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import axios from 'axios';
+import axios from '../../axios';
 
 ChartJS.register(
   CategoryScale,
@@ -34,50 +34,43 @@ ChartJS.register(
   ChartDataLabels
 );
 
-const data = [
-  { "time_hour": 5, "time_amount": 27710, "time_count": 5 },
-  { "time_hour": 6, "time_amount": 27682, "time_count": 2 },
-  { "time_hour": 7, "time_amount": 22764, "time_count": 4 },
-  { "time_hour": 8, "time_amount": 46618, "time_count": 2 },
-  { "time_hour": 9, "time_amount": 49682, "time_count": 2 },
-  { "time_hour": 10, "time_amount": 30535, "time_count": 2 }
-];
-
 const Graph = () => {
   const [startDate, setStartDate] = useState(new Date("2024/05/17"));
   const [endDate, setEndDate] = useState(new Date("2024/05/19"));
-  const [graphData, setGraphData] = useState(null);
-  const [joinedAt, setJoinedAt] = useState(null);
+  const [data, setData] = useState([]);
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchJoinedAt = async () => {
-      try {
-        const response = await axios.post('/get-joined-at');
-        const joinedAt = response.data.joinedAt;
-        sessionStorage.setItem('joinedAt', joinedAt);
-        setJoinedAt(new Date(joinedAt));
-      } catch (error) {
-        console.error('Failed to fetch joined_at:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchJoinedAt = async () => {
+  //     try {
+  //       const response = await axios.post('/get-joined-at');
+  //       const joinedAt = response.data.joinedAt;
+  //       sessionStorage.setItem('joinedAt', joinedAt);
+  //       setJoinedAt(new Date(joinedAt));
+  //     } catch (error) {
+  //       console.error('Failed to fetch joined_at:', error);
+  //     }
+  //   };
 
-    fetchJoinedAt();
-  }, []);
+  //   fetchJoinedAt();
+  // }, []);
+
+  const formatDate = (date) => {
+    const year = String(date.getFullYear()).slice(2);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}/${month}/${day}`;
+  };
 
   const handleStartDateChange = (date) => {
     const oneMonthAfterStart = new Date(date);
     oneMonthAfterStart.setMonth(oneMonthAfterStart.getMonth() + 1);
 
-    if (joinedAt && date < joinedAt) {
-      alert('시작 날짜는 가입 날짜 이후로 선택해야 합니다. 다시 선택해주세요.');
-      return;
-    }
-
     if (endDate > oneMonthAfterStart) {
-      alert('기간은 최대 한 달까지 설정할 수 있습니다. 종료 날짜를 조정해주세요.');
+        alert('기간은 최대 한 달까지 설정할 수 있습니다. 종료 날짜를 조정해주세요.');
     } else {
-      setStartDate(date);
+        setStartDate(date);
     }
   };
 
@@ -86,38 +79,43 @@ const Graph = () => {
     oneMonthBeforeEnd.setMonth(oneMonthBeforeEnd.getMonth() - 1);
 
     if (startDate < oneMonthBeforeEnd) {
-      alert('기간은 최대 한 달까지 설정할 수 있습니다. 시작 날짜를 조정해주세요.');
+        alert('기간은 최대 한 달까지 설정할 수 있습니다. 시작 날짜를 조정해주세요.');
     } else {
-      setEndDate(date);
+        setEndDate(date);
     }
   };
 
-  const maxAmount = Math.max(...data.map((item) => item.time_amount));
-  const maxYValue = Math.round((maxAmount * 1.3) / 1000) * 1000;
+  const handleSearch = async () => {
+    try {
+        const formattedStartDate = formatDate(startDate);
+        const formattedEndDate = formatDate(endDate);
+
+        console.log('handleSearch Function', formattedStartDate, formattedEndDate); // 요청 전에 확인
+
+        const response = await axios.post('/graphDateRange', {
+            startDate: formattedStartDate,
+            endDate: formattedEndDate
+        });
+        
+        console.log(response.data.result);
+        setData(response.data.result);
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
+  };
 
   const chartData = {
-    labels: data.map((item) => `${item.time_hour}시`),
+    labels: data.map((item) => item[0]),  // 날짜 레이블
     datasets: [
       {
         yAxisID: "y1",
         type: "bar",
-        label: "Bar 차트",
-        data: data.map((item) => item.time_amount),
+        label: "담배 피운 횟수",
+        data: data.map((item) => item[1]),  // 담배 피운 횟수 데이터
         backgroundColor: "rgba(255, 99, 132, 0.5)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
-      },
-      {
-        yAxisID: "y1",
-        type: "line",
-        label: "Line 차트",
-        data: data.map((item) => item.time_amount),
-        backgroundColor: "rgba(54, 162, 235, 0.5)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 2,
-        fill: false,
-        tension: 0.1,
-      },
+      }
     ],
   };
 
@@ -126,7 +124,6 @@ const Graph = () => {
       y1: {
         beginAtZero: true,
         position: "left",
-        max: maxYValue,
       },
     },
     plugins: {
@@ -134,13 +131,7 @@ const Graph = () => {
             display: true,
       },
       datalabels: {
-        formatter: (value, context) => {
-          const timeCount = data[context.dataIndex].time_count;
-          return timeCount;
-        },
-        display: function (context) {
-          return context.dataset.yAxisID !== "y2";
-        },
+        formatter: (value) => value,
         color: "black",
         anchor: "end",
         align: "start",
@@ -180,7 +171,7 @@ const Graph = () => {
             minDate={startDate}
           />
         </div>
-        <button> 조회하기 </button>
+        <button onClick={handleSearch}>조회하기</button>
       </div>
       <div>
         <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>

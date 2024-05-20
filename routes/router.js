@@ -192,6 +192,7 @@ router.post('/joinDatamanager', async (req, res) => {
 });
 
 /** 로그인 */
+/** 로그인 */
 router.post('/login', async (req, res) => {
     const { email, password, userType } = req.body;
 
@@ -199,9 +200,9 @@ router.post('/login', async (req, res) => {
         const connection = await db.connectToOracle();
         let sql = ''
         if (userType === 'personal') {
-            sql = `SELECT USER_EMAIL FROM TB_USER WHERE USER_EMAIL = :email AND USER_PW = :password`;
+            sql = `SELECT USER_EMAIL, JOINED_AT FROM TB_USER WHERE USER_EMAIL = :email AND USER_PW = :password`;
         } else {
-            sql = `SELECT MGR_EMAIL FROM TB_MANAGER WHERE MGR_EMAIL = :email AND MGR_PW = :password`;
+            sql = `SELECT MGR_EMAIL, JOINED_AT FROM TB_MANAGER WHERE MGR_EMAIL = :email AND MGR_PW = :password`;
         }
         
         const params = { email, password };
@@ -209,8 +210,14 @@ router.post('/login', async (req, res) => {
         const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         if (result.rows.length > 0) {
+            const user = result.rows[0];
             req.session.email = email; // 세션에 이메일 저장
-            res.json({ success: true, message: '로그인 성공', email });
+            res.json({ 
+                success: true, 
+                message: '로그인 성공', 
+                email: user.USER_EMAIL || user.MGR_EMAIL,
+                joined_at: user.JOINED_AT 
+            });
         } else {
             res.json({ success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
         }
@@ -221,6 +228,7 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ success: false, message: '로그인 실패' });
     }
 });
+
 
 /** user 이메일 찾기 */
 router.post('/find-useremail', async (req, res) => {
@@ -471,6 +479,44 @@ router.post('/handledate', async (req, res) => {
         await connection.close();
 
         
+    } catch (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// 날짜 범위 조회하기(그래프)
+router.post('/graphDateRange', async (req, res) => {
+    console.log('기간 내 데이터를 조회합니다.');
+
+    const user = 'user_email 13';
+    const { startDate, endDate } = req.body;
+    console.log('startDate', startDate, 'endDate', endDate, 'user', user);
+
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `
+        SELECT TO_CHAR(smoke_time, 'YY/MM/DD') AS SMOKE_DATE, COUNT(*) AS SMOKE_COUNT
+        FROM tb_smoking_sensor
+        WHERE user_email ='${user}'
+        AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD') AND TO_DATE('${endDate}', 'YY/MM/DD')+1
+        GROUP BY TO_CHAR(smoke_time, 'YY/MM/DD')
+        ORDER BY TO_CHAR(smoke_time, 'YY/MM/DD')
+        `;
+
+        console.log("Executing SQL:", sql);
+        oracledb.fetchAsString = [oracledb.DATE];
+
+        connection.execute(sql, function(err,result){
+            if(err){
+                console.log(err.message)
+            }else {
+                console.log('success', result.rows)
+                res.json({result : result.rows})
+            }
+        })
+
+        await connection.close();
     } catch (err) {
         console.error('Error executing query:', err);
         res.status(500).json({ error: 'Internal Server Error' });
