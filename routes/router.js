@@ -223,7 +223,6 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
 /** user 이메일 찾기 */
 router.post('/find-useremail', async (req, res) => {
     const { name, birthDate } = req.body;
@@ -516,4 +515,5 @@ router.post('/graphDateRange', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
 module.exports = router;

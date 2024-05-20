@@ -251,8 +251,6 @@ svg {
   display: none;
 }
 
-
-
 .total_box {
   background-color: rgb(235, 235, 235);
   border-radius: 5px;
@@ -346,20 +344,6 @@ svg {
   background-color: rgb(221, 221, 221) !important;
   color: rgb(221, 221, 221);
 }
-
-/* Cal_Button */
-#btn{
-  width: 60px;
-  height: 30px;
-  text-align: center;
-  font-size: 10px;
-  border-radius: 5px;
-}
-
-#lk{
-  float: right;
-}
-
 
 /* Frist, Join-First */
 .first-container {
@@ -824,50 +808,68 @@ svg {
 
 
 /* Cal_detail */
-.datepicker-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+#caldetail {
+  margin-top: 10px;
 }
-
 .datepicker-container label {
   margin-right: 10px;
 }
 
-.footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #fff;
-  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
+.datepicker-container-detail {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 4px;
+  gap: 10px;
 }
 
-table {
-  width: 100%;
+.caldetail {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.caldetail-text {
+  margin-bottom: 4px;
+  text-align: center; 
+}
+
+.caldetail table {
+  width: 80%;
   border-collapse: collapse;
-  margin-top: 20px;
+  margin-top: 10px;
 }
 
-table th, table td {
-  border: 1px solid #ddd;
+.caldetail table th, .caldetail table td {
+  border: 1px solid #f2f2f2;
   padding: 8px;
-  text-align: left;
+  text-align: center; 
 }
 
-table th {
-  background-color: #f4f4f4;
+.caldetail table th {
+  background-color: #f2f2f2;
+}
+
+.calbtn-title {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 20px;
+}
+
+.checkbtn-detail {
+  border: none;
+  background-color: rgb(221, 221, 221);
+  border-radius: 5px;
+  padding: 4px 9px;
+  margin-top: 15px;
+  color: #414141;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
 /* Graph */
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 1rem;
-}
-
 .controls {
   display: flex;
   flex-direction: column;
@@ -877,31 +879,50 @@ table th {
 
 .datepicker-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
+input#start-date, input#end-date {
+  width: 100px;
+  padding: 2px 4px;
+}
+
 .datepicker-container label {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0rem;
 }
 
 button {
   margin: 0.5rem 0;
 }
 
-.graph {
+.graph-container {
+  display: flex;
+  justify-content: center;
   width: 100%;
-  max-width: 600px;
 }
 
-.footer {
-  margin-top: 1rem;
+.graph {
+  max-width: 800px; 
+  width: 100%;
+  height: 400px;  
+  padding: 0px 30px;
 }
+
+.checkbtn {
+  border: none;
+  background-color:  rgb(221, 221, 221);
+  border-radius: 5px;
+  padding: 4px 9px;
+  margin-top: 5px;
+  color: #414141;
+  font-size: 14px;
+}
+
 
 @media (min-width: 768px) {
   .controls {
-    flex-direction: row;
     justify-content: center;
   }
 
@@ -915,4 +936,43 @@ button {
   .datepicker-container:last-of-type {
     margin-right: 0;
   }
+}
+
+/* Cal_main */
+.cal-container {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+#calbtn {
+  border: none;
+  background-color: #555555;
+  border-radius: 5px;
+  padding: 4px 10px;
+  color: rgb(255, 255, 255);
+  font-size: 13px;
+  text-align: center;
+}
+
+#lk{
+  float: right;
+  color: #333;
+  text-decoration: none;
+}
+
+.cal-text {
+  display: flex;
+  margin: 10px 0px;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 210px;
+}
+
+.cal-real {
+  margin-bottom: 15px;
 }

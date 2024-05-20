@@ -40,21 +40,24 @@ const Cal_main = () => {
   };
 
   return (
-    <div>
+    <div className='main-container'>
       <Header />
-      <button id='btn' onClick={handleGraphClick}>그래프</button>
-
-      <div>
-        <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
-      </div>
-
-      <div>
+      <div className='cal-container'>
+        <div className='cal-text'>
+          <button id='calbtn' onClick={handleGraphClick}>그래프</button>
+          <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
+        </div>
+      
+      <div className='cal'>
+        <div className='cal-real'>
         <Cal_real selectedDate={selectedDate} onDateChange={handleDateChange} />
+        </div>
         <div>
           {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
         </div>
         <hr />
-        <Cal_table data={data} /> {/* 데이터를 props로 전달 */}
+        <Cal_table data={data} />
+      </div>
       </div>
 
       <div className='footer'><Menu /></div>

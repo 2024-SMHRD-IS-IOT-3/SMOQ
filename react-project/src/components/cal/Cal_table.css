@@ -1,20 +1,20 @@
 .styled-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 25px 0;
+    margin: 20px 0;
     font-size: 18px;
-    text-align: center; /* 전체 테이블 내용을 가운데 정렬 */
+    text-align: center; 
 }
-.styled-table thead tr {
-    background-color: gray;
-    color: #ffffff;
-    text-align: center; /* 헤더 내용을 가운데 정렬 */
+.styled-table thead th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center; 
 }
 .styled-table th,
 .styled-table td {
-    padding: 12px 15px;
-    border: 1px solid #dddddd;
-    text-align: center; /* 셀 내용을 가운데 정렬 */
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
 }
 .styled-table tbody tr {
     border-bottom: 1px solid #dddddd;
