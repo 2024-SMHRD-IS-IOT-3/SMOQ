@@ -13,6 +13,8 @@ import Join from './components/login_join_find/Join';
 import Findselect from './components/login_join_find/Find_select';
 import Findemail from './components/login_join_find/Find_email';
 import Findpw from './components/login_join_find/Find_pw';
+import MainMgr from './components/main/Main_mag'
+import SelectUserData from './components/main/Select_user_data'
 
 function App() {
   return (
@@ -30,6 +32,10 @@ function App() {
         <Route path='/main' element={<Main />} />
         <Route path='/Cal_main' element={<Calmain />} />
         <Route path='/Cal_Detail' element={<CalDetail />} />
+        <Route path='/Graph' element={<Graph />} />
+        
+        <Route path='/main_mgr' element={<MainMgr />} />
+        <Route path='/select_user_data' element={<SelectUserData/>}/>
       </Routes>
     </div>
   );

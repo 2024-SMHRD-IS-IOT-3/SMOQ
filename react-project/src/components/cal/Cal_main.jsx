@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import Header from '../header/Header';
 import Menu from '../footer/Footer';
-import { useNavigate } from 'react-router-dom';
 import Cal_real from './Cal_real';
 import Cal_table from './Cal_table';
 import 'react-calendar/dist/Calendar.css';
@@ -10,16 +10,19 @@ import axios from '../../axios';
 const Cal_main = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [data, setData] = useState([]);
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate();
 
   const handleDateChange = (date) => {
     const formattedDate = formatDate(new Date(date));
     console.log('handle date Function', formattedDate);
+    
     axios.post('/handledate', {
       date: formattedDate,
     }).then(res => {
       console.log(res.data.result);
-      setData(res.data.result); // 받아온 데이터를 상태에 저장
+      setData(res.data.result);
+    }).catch(error => {
+      console.error("There was an error fetching the data!", error);
     });
 
     setSelectedDate(date);
@@ -32,26 +35,26 @@ const Cal_main = () => {
     return `${year}/${month}/${day}`;
   };
 
-  const handleButtonClick = () => {
-    navigate('/Cal_Detail'); // 버튼 클릭 시 페이지 이동
+  const handleGraphClick = () => {
+    navigate('/Graph');
   };
 
   return (
     <div>
       <Header />
-      <button id='btn' onClick={handleButtonClick}>그래프</button> {/* onClick 이벤트 추가 */}
+      <button id='btn' onClick={handleGraphClick}>그래프</button>
 
       <div>
-        <button onClick={() => navigate('/Cal_Detail')} id='lk'>자세히보기{'>'}</button> {/* Link 대신 button 사용 */}
+        <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
       </div>
 
       <div>
-        <Cal_real selectedDate={selectedDate} onDateChange={handleDateChange}></Cal_real>
+        <Cal_real selectedDate={selectedDate} onDateChange={handleDateChange} />
         <div>
           {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
         </div>
         <hr />
-        <Cal_table data={data}></Cal_table> {/* 데이터를 props로 전달 */}
+        <Cal_table data={data} /> {/* 데이터를 props로 전달 */}
       </div>
 
       <div className='footer'><Menu /></div>

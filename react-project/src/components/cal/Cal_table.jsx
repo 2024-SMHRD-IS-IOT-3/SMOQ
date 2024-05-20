@@ -8,13 +8,13 @@ const Cal_table = ({ data }) => {
         <tr>
           <th>시간</th>
           <th>장소</th>
-          <th>메모</th>
+
         </tr>
       </thead>
       <tbody>
         {data.map((item, index) => (
           <tr key={index}>
-            <td>{item[0]}</td><td>{item[1]}</td><td>-</td>
+            <td>{item[0]}</td><td>{item[1]}</td>
           </tr>
         ))}
       </tbody>

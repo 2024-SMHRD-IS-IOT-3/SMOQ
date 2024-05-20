@@ -1,7 +1,7 @@
 @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css);
 
 /* 모바일 화면 */
-@media (max-width: 480px) {
+@media (max-width: 400px) {
   .main-task {
     gap: 5px;
   }
@@ -384,19 +384,11 @@ svg {
   margin: 10px 0;
   padding: 10px 0;
   font-size: 1.2rem;
-}
-
-.btn-join {
   background-color: #50a5f0 !important;
   border-color: #50a5f0 !important;
   font-weight: bold !important;
 }
 
-.btn-login {
-  background-color: #50a5f0 !important;
-  border-color: #50a5f0 !important;
-  font-weight: bold !important;
-}
 
 .first-title {
   font-size: 1.8rem;
@@ -696,4 +688,231 @@ svg {
   font-size: 1rem;
   margin-top: 5px;
   margin-bottom: 0px;
+}
+
+
+/* Main_mgr */
+.mgr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  border-radius: 5px;
+  margin-bottom: 15px;
+  padding-left: 5px;
+  margin-top: 20px;
+}
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  width: 100%;
+}
+
+.inputmgr {
+  padding: 4px 6px;
+  flex: 1;
+  border-radius: 4px;
+  width: 60%;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+}
+
+.mrg-select {
+  font-size: 1.1rem;
+  font-weight: bold; 
+  text-align: left; 
+  width: 60%; 
+  color: #303030;
+}
+
+.div-mgr-select {
+  display: flex;
+  justify-content: flex-start; 
+  margin-bottom: 10px;
+  width: 60%; 
+}
+
+.user-table {
+  width: 65%; 
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.user-table th, .user-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center; 
+}
+
+.user-table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.button-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: 60%;
+  margin-bottom: 10px;
+}
+
+.btnselectmgr {
+  padding: 4px 20px;
+  font-size: 0.7rem;
+  background-color: #50a5f0 !important;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-detail {
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  background-color: #50a5f0;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.mgr-line {
+  width: 60%;
+  border-bottom: 2px solid #ccc;
+  margin: 10px 0;
+}
+
+/* Select_user_data */
+.mgr-container {
+  max-width: 800px;
+}
+
+.text-mgrselect h3, .text-mgrselect p {
+  margin: 0px;
+}
+
+.text-mgrselect h3 {
+  font-size: 1.3rem;
+  color: #414141;
+}
+
+.user-table {
+  width: 70%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  text-align: center; 
+}
+
+.user-table th, .user-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: center; 
+}
+
+.alert {
+  text-align: center;
+  color: red;
+}
+
+.text-mgrselect {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* Cal_detail */
+.datepicker-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.datepicker-container label {
+  margin-right: 10px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th {
+  background-color: #f4f4f4;
+}
+
+/* Graph */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.datepicker-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.datepicker-container label {
+  margin-bottom: 0.25rem;
+}
+
+button {
+  margin: 0.5rem 0;
+}
+
+.graph {
+  width: 100%;
+  max-width: 600px;
+}
+
+.footer {
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .controls {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .datepicker-container {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0;
+    margin-right: 1rem;
+  }
+
+  .datepicker-container:last-of-type {
+    margin-right: 0;
+  }
 }

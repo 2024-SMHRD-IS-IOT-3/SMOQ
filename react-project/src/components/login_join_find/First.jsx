@@ -46,8 +46,15 @@ const First = () => {
     axios.post('/login', { email, password, userType })
       .then(res => {
         if (res.data.success) {
-          sessionStorage.setItem('email', res.data.email); // 세션 스토리지에 이메일 저장
-          navigate('/main'); // 메인 페이지로 이동
+          sessionStorage.setItem('email', res.data.email);
+          if (userType === 'personal') {
+            console.log('Navigating to /main'); // 추가된 로그
+            navigate('/main');
+          } else if (userType === 'manager') {
+            console.log('Navigating to /main_mgr'); // 추가된 로그
+            navigate('/main_mgr');
+          }
+           
         } else {
           alert(res.data.message);
         }

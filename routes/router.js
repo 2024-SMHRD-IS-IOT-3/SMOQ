@@ -29,10 +29,16 @@ router.post('/selectsmokingtime', async (req, res) => {
         oracledb.fetchAsString = [oracledb.DATE];
         const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
-        result.rows.forEach(row => {
-            const dateStr = row.SMOKE_TIME; 
-            const date = new Date(dateStr);
-          });
+        if (result.rows.length === 0) {
+            result.rows.push({ SMOKE_TIME: "0" });
+        } else {
+            result.rows.forEach(row => {
+                const dateStr = row.SMOKE_TIME; 
+                const date = new Date(dateStr);
+              });
+        }
+
+        
 
       
         await connection.close();
@@ -91,45 +97,6 @@ router.post('/selectsmokingcnt', async (req, res) => {
     }
 });
 
-/** 캘린더 */ 
-router.post('/handledate', async (req, res) => {
-    console.log('최근 흡연 시간을 조회합니다.');
-
-    const user = 'user_email 01';
-    const { date } = req.body;
-    console.log('date', date, 'user',user);
-
-    try {
-        const connection = await db.connectToOracle();
-        const sql = `
-        SELECT TO_CHAR(smoke_time, 'MM/DD HH24:MI'), smoke_loc
-        FROM tb_smoking_sensor
-        WHERE user_email = '${user}'
-        AND TO_CHAR(smoke_time,'YY/MM/DD') LIKE '${date}'
-        `;
-
-        console.log("Executing SQL:", sql);
-
-        oracledb.fetchAsString = [oracledb.DATE];
-        connection.execute(sql, function(err,result){
-            if(err){
-                console.log(err.message)
-            }else {
-                console.log('success', result.rows)
-                res.json({result : result.rows})
-                // res.send(result.rows);
-            }
-        })
-
-        await connection.close();
-
-        
-    } catch (err) {
-        console.error('Error executing query:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
 /** 이메일 랜덤 코드 생성 함수 */ 
 function generateRandomCode(length = 6) {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -167,7 +134,6 @@ router.post('/send-email', async (req, res) => {
         res.status(500).json({ success: false, message: '코드 전송 실패', error: error.message });
     }
 });
-
 
 /** 이메일 코드 인증 */ 
 router.post('/sendcode', async (req, res) => {
@@ -333,7 +299,6 @@ router.post('/send-userpw', async (req, res) => {
     }
 });
 
-
 /** manager 임시 비밀번호 발송 */
 router.post('/send-managerpw', async (req, res) => {
     const { email, name, org } = req.body;
@@ -364,5 +329,151 @@ router.post('/send-managerpw', async (req, res) => {
     }
 });
 
+/** 관리자가 유저 조회 */
+router.post('/find-user', async (req, res) => {
+    const { name, birthDate } = req.body;
 
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :birthDate`;
+        const params = { name, birthDate };
+
+        const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        await connection.close();
+
+        if (result.rows.length > 0) {
+            res.json({ success: true, users: result.rows });
+        } else {
+            res.json({ success: false, message: '존재하지 않는 사용자입니다.' });
+        }
+    } catch (error) {
+        console.error('사용자 검색 실패:', error);
+        res.status(500).json({ success: false, message: '사용자 검색 실패' });
+    }
+});
+
+/** 모든 사용자 정보 조회 */
+router.get('/all-users', async (req, res) => {
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER`;
+
+        const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        await connection.close();
+
+        if (result.rows.length > 0) {
+            res.json({ success: true, users: result.rows });
+        } else {
+            res.json({ success: false, message: '사용자 정보가 없습니다.' });
+        }
+    } catch (error) {
+        console.error('모든 사용자 정보 불러오기 실패:', error);
+        res.status(500).json({ success: false, message: '모든 사용자 정보 불러오기 실패' });
+    }
+});
+
+/** 관리자가 사용자를 조회 */
+router.post('/get-smoking-data', async (req, res) => {
+    const { name, birthDate } = req.body;
+  
+    try {
+      const connection = await db.connectToOracle();
+      const sql = `
+        SELECT TO_CHAR(smoke_time, 'YYYY-MM-DD HH24:MI:SS') AS SMOKE_DATE, smoke_loc AS SMOKE_LOC
+        FROM tb_smoking_sensor
+        WHERE user_email = (
+          SELECT USER_EMAIL FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :birthDate
+        )
+        ORDER BY smoke_time DESC
+      `;
+      const params = { name, birthDate };
+  
+      const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+      await connection.close();
+  
+      if (result.rows.length > 0) {
+        res.json({ success: true, data: result.rows });
+      } else {
+        res.json({ success: false, message: '흡연 데이터가 없습니다.' });
+      }
+    } catch (error) {
+      console.error('흡연 데이터 불러오기 실패:', error);
+      res.status(500).json({ success: false, message: '흡연 데이터 불러오기 실패' });
+    }
+  });
+
+/** 날짜 범위 조회 */
+  router.post('/queryDateRange', async (req, res) => {
+    console.log('기간 내 데이터를 조회합니다.');
+
+    const user = 'user_email 13';
+    const { startDate, endDate } = req.body;
+    console.log('startDate', startDate, 'endDate', endDate, 'user', user);
+
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `
+        SELECT TO_CHAR(smoke_time,'MM/DD HH24:MI') AS SMOKE_TIME, smoke_loc AS SMOKE_LOC
+        FROM tb_smoking_sensor
+        WHERE user_email ='${user}'
+        AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD') AND TO_DATE('${endDate}', 'YY/MM/DD') + 1
+        `;
+
+        console.log("Executing SQL:", sql);
+        oracledb.fetchAsString = [oracledb.DATE];
+
+        connection.execute(sql, function(err,result){
+            if(err){
+                console.log(err.message)
+            }else {
+                console.log('success', result.rows)
+                res.json({result : result.rows})
+            }
+        })
+
+        await connection.close();
+    } catch (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+/** 캘린더 날짜로 조회 */
+router.post('/handledate', async (req, res) => {
+    console.log('최근 흡연 시간을 조회합니다.');
+
+    const user = 'user_email 13';
+    const { date } = req.body;
+    console.log('date', date, 'user',user);
+
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `
+        SELECT TO_CHAR(smoke_time, 'MM/DD HH24:MI'), smoke_loc
+        FROM tb_smoking_sensor
+        WHERE user_email = '${user}'
+        AND TO_CHAR(smoke_time,'YY/MM/DD') LIKE '${date}'
+        `;
+
+        console.log("Executing SQL:", sql);
+
+        oracledb.fetchAsString = [oracledb.DATE];
+        connection.execute(sql, function(err,result){
+            if(err){
+                console.log(err.message)
+            }else {
+                console.log('success', result.rows)
+                res.json({result : result.rows})
+                // res.send(result.rows);
+            }
+        })
+
+        await connection.close();
+
+        
+    } catch (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 module.exports = router;
