@@ -20,13 +20,13 @@ router.post('/selectsmokingtime', async (req, res) => {
         const connection = await db.connectToOracle();
         const sql = `SELECT TO_CHAR(smoke_time, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') as smoke_time
                      FROM tb_smoking_sensor a
-                     where user_email = 'user_email 01'
+                     where user_email = :email
                      and a.sensor_idx = (select max(sensor_idx)
                                            from tb_smoking_sensor )`;
 
 
         oracledb.fetchAsString = [oracledb.DATE];
-        const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
        
             result.rows.forEach(row => {
@@ -48,7 +48,7 @@ router.post('/selectsmokingtime', async (req, res) => {
 /** 흡연 카운트를 가져오는 경로 */
 router.post('/selectsmokingcnt', async (req, res) => {
 
-    // let { email } = req.body;
+    let { email } = req.body;
 
     try {
         const connection = await db.connectToOracle();
@@ -58,11 +58,11 @@ router.post('/selectsmokingcnt', async (req, res) => {
             `WITH smoke_counts AS (
             SELECT COUNT(*) AS count
             FROM tb_smoking_sensor
-            WHERE user_email = 'user_email 01'
+            WHERE user_email = :email
             GROUP BY TRUNC(TO_DATE(smoke_date, 'YYYY-MM-DD'))
             )
             SELECT AVG(count) AS average
-            FROM smoke_counts`
+            FROM smoke_counts`, [email]
         );
   
         const averageCount = averageResult.rows.length > 0 ? averageResult.rows[0][0] : 0;
@@ -71,7 +71,7 @@ router.post('/selectsmokingcnt', async (req, res) => {
         const todayResult = await connection.execute(
             `SELECT COUNT(*) AS count
             FROM tb_smoking_sensor
-            WHERE user_email = 'user_email 01' AND TRUNC(TO_DATE(smoke_date, 'YYYY-MM-DD')) = TRUNC(SYSDATE)`
+            WHERE user_email = :email AND TRUNC(TO_DATE(smoke_date, 'YYYY-MM-DD')) = TRUNC(SYSDATE)`, [email]
         );
     
         const todayCount = todayResult.rows.length > 0 ? todayResult.rows[0][0] : 0;
@@ -155,9 +155,13 @@ router.post('/joinDatauser', async (req, res) => {
         const connection = await db.connectToOracle();
         const sql = `INSERT INTO TB_USER (USER_EMAIL, USER_PW, USER_NAME, USER_NICK, USER_BIRTHDATE, USER_SMOKE_CNT, JOINED_AT)
                      VALUES (:email, :password, :name, :nickname, TO_DATE(:birthDate, 'YYYY-MM-DD'), :smokeCount, SYSDATE)`;
+
+        const sql2 = `INSERT INTO TB_WRITING_USER (USER_EMAIL) VALUES (:email)`
         const params = { email, password, name, nickname, birthDate, smokeCount };
+        const params2 = { email };
     
         await connection.execute(sql, params, { autoCommit: true });
+        await connection.execute(sql2, params2, { autoCommit: true });
     
         res.json({ result: "success", message: '회원가입 성공' });
       } catch (error) {
@@ -174,9 +178,12 @@ router.post('/joinDatamanager', async (req, res) => {
         const connection = await db.connectToOracle();
         const sql = `INSERT INTO TB_MANAGER (MGR_EMAIL, MGR_PW, MGR_NAME, MGR_ORG, CREATED_AT)
                      VALUES (:email, :password, :name, :org, SYSDATE)`;
+        const sql2 = `INSERT INTO TB_WRITING_USER (MGR_EMAIL) VALUES (:email)`
         const params = {email, password, name, org};
+        const params2 = { email };
     
         await connection.execute(sql, params, { autoCommit: true });
+        await connection.execute(sql2, params2, { autoCommit: true });
     
         res.json({ result: "success", message: '회원가입 성공' });
       } catch (error) {
@@ -202,6 +209,8 @@ router.post('/login', async (req, res) => {
 
         const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
+        
+
         if (result.rows.length > 0) {
             const user = result.rows[0];
             req.session.email = email; // 세션에 이메일 저장
@@ -211,10 +220,11 @@ router.post('/login', async (req, res) => {
                 email: user.USER_EMAIL || user.MGR_EMAIL,
                 joined_at: user.JOINED_AT 
             });
+
         } else {
             res.json({ success: false, message: '이메일 또는 비밀번호가 올바르지 않습니다.' });
         }
-
+            
         await connection.close();
     } catch (error) {
         console.error('로그인 실패:', error);
@@ -406,7 +416,7 @@ router.post('/get-smoking-data', async (req, res) => {
   router.post('/queryDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
-    const user = 'user_email 13';
+    const user = req.body;
     const { startDate, endDate } = req.body;
     console.log('startDate', startDate, 'endDate', endDate, 'user', user);
 
@@ -442,8 +452,7 @@ router.post('/get-smoking-data', async (req, res) => {
 router.post('/handledate', async (req, res) => {
     console.log('최근 흡연 시간을 조회합니다.');
 
-    const user = 'limcon00@naver.com';
-    const { date } = req.body;
+    const { user, date } = req.body;
     console.log('date', date, 'user',user);
 
     try {
@@ -481,8 +490,7 @@ router.post('/handledate', async (req, res) => {
 router.post('/graphDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
-    const user = 'user_email 13';
-    const { startDate, endDate } = req.body;
+    const { user, startDate, endDate } = req.body;
     console.log('startDate', startDate, 'endDate', endDate, 'user', user);
 
     try {
@@ -515,18 +523,19 @@ router.post('/graphDateRange', async (req, res) => {
     }
 });
 
-/** 게시글 목록 가져오기 */
+/** 게시글 전체 목록 가져오기 */
 router.get('/journallist', async (req, res) => {
     try {
       const connection = await db.connectToOracle();
-      const sql = `SELECT POST_IDX, WRITING_USER, POST_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT, POST_LIKES FROM TB_POST`;
+      const sql = `SELECT POST_IDX, WRITING_USER, POST_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT, POST_LIKES FROM TB_POST ORDER BY CREATED_AT DESC`;
       const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
   
       const journalData = await Promise.all(result.rows.map(async (row) => {
         const postContent = await lobToString(row.POST_CONTENT);
         const commentCount = await getCommentCount(connection, row.POST_IDX);
-  
+
         return {
+          id: row.POST_IDX,
           user: row.WRITING_USER,
           content: postContent,
           date: row.CREATED_AT,
@@ -544,7 +553,7 @@ router.get('/journallist', async (req, res) => {
     }
   });
   
-  /** 댓글 개수 가져오기 */
+  /** post_idx에 따른 댓글 개수 가져오기 */
   async function getCommentCount(connection, postIdx) {
     try {
       const sql = `SELECT COUNT(*) AS COUNT FROM TB_COMMENT WHERE POST_IDX = :postIdx`;
@@ -580,11 +589,13 @@ router.get('/journallist', async (req, res) => {
 /** 게시물 좋아요 수 업데이트 */
 router.post('/update-like', async (req, res) => {
     const { postId } = req.body;
+    console.log(postId)
   
     try {
       const connection = await db.connectToOracle();
       const sql = `UPDATE TB_POST SET POST_LIKES = POST_LIKES + 1 WHERE POST_IDX = :postId`;
       await connection.execute(sql, [postId], { autoCommit: true });
+      console.log(postId)
   
       await connection.close();
       res.json({ success: true });
@@ -593,12 +604,11 @@ router.post('/update-like', async (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to update likes' });
     }
   });
-  
 
 /** 카카오 지도 */
 router.post('/handlemap', async(req, res)=> {
     console.log('지도를 표시합니다');
-    const user = 'limcon00@naver.com';
+    const user = req.body;
 
     try {
         const connection = await db.connectToOracle();
@@ -629,5 +639,115 @@ router.post('/handlemap', async(req, res)=> {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+/** 클릭한 게시글 내용 */
+router.get('/post/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ success: false, message: 'Post ID must be a valid number' });
+    }
+  
+    try {
+      const connection = await db.connectToOracle();
+      const postSql = `SELECT POST_IDX, WRITING_USER, POST_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT, POST_LIKES FROM TB_POST WHERE POST_IDX = :ids`;
+      const postResult = await connection.execute(postSql, [parseInt(id)], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+  
+      if (postResult.rows.length === 0) {
+        await connection.close();
+        return res.status(404).json({ success: false, message: 'Post not found' });
+      }
+  
+      const postContent = await lobToString(postResult.rows[0].POST_CONTENT);
+      const post = {
+        user: postResult.rows[0].WRITING_USER,
+        content: postContent,
+        date: postResult.rows[0].CREATED_AT,
+        likes: postResult.rows[0].POST_LIKES,
+      };
+  
+      await connection.close();
+  
+      res.json({ success: true, post });
+    } catch (error) {
+      console.error('Failed to fetch post data:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch post data' });
+    }
+  });
+
+/** 클릭한 게시글의 댓글 목록 */
+router.get('/postcomments/:id', async (req, res) => {
+    const postId = req.params.id;
+
+    console.log("postID",postId)
+  
+    try {
+      const connection = await db.connectToOracle();
+  
+      const result = await connection.execute(
+        `SELECT WRITING_USER, CMT_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT FROM TB_COMMENT WHERE POST_IDX = :postId ORDER BY CREATED_AT DESC`,
+        [postId]
+      );
+  
+      const comments = result.rows.map(row => ({
+        user: row[0],
+        content: row[1],
+        date: row[2]
+      }));
+
+      console.log("comments", comments)
+  
+      res.json({ success: true, comments });
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      res.json({ success: false, message: 'Failed to fetch comments' });
+    } 
+    });
+  
+/** 댓글작성 */
+router.post('/post/:id/comment', async (req, res) => {
+    const { id } = req.params;
+    const { user, content } = req.body; 
+        
+    const intid = parseInt(id, 10)
+    const intuser = parseInt(user, 10)
+        console.log(id, intuser,content)
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `INSERT INTO TB_COMMENT (POST_IDX, CMT_CONTENT, CREATED_AT, WRITING_USER) VALUES (:intid, :content, sysdate, :intuser)`;
+        const params = { intid, content, intuser };
+        console.log("params")
+        await connection.execute(sql, params, { autoCommit: true });
+        console.log("connec")
+        res.json({ success: true, message: '댓글이 성공적으로 저장되었습니다.' });
+    } catch (error) {
+        console.error('Failed to save comment:', error);
+        res.status(500).json({ success: false, message: 'Failed to save comment', error: error.message });
+    }
+});
+
+/** 게시글을 작성 */
+router.post('/writepost', async (req, res) => {
+    const { content, email } = req.body;
+
+  
+    try {
+      const connection = await db.connectToOracle();
+      const sql = `INSERT INTO TB_POST (POST_CONTENT, CREATED_AT, WRITING_USER)
+      VALUES (
+          :content,
+          SYSDATE,
+          (SELECT writing_user FROM TB_WRITING_USER WHERE USER_EMAIL = :email)
+      )`;
+      const params = { content, email};
+  
+      await connection.execute(sql, params, { autoCommit: true });
+  
+      res.json({ success: true, message: 'Post saved successfully.' });
+    } catch (error) {
+      console.error('Failed to save post:', error);
+      res.status(500).json({ success: false, message: 'Failed to save post', error: error.message });
+    } 
+  });
 
 module.exports = router;

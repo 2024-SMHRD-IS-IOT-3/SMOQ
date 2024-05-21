@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Header from "../header/Header";
-import Footer from "../footer/Footer";
+import Footer_mgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 import { FaHeart, FaComment } from "react-icons/fa";
 import { FaRegFaceGrin } from "react-icons/fa6";
@@ -155,7 +155,7 @@ const Journal_comment = () => {
         </div>
       </div>
       <div className="footer">
-        <Footer />
+        <Footer_mgr />
       </div>
     </div>
   );

@@ -14,6 +14,12 @@ const JournalItem = ({ id, user, date, content, initialLikes, comments }) => {
   const handlePostLike = async () => {
     if (isLiking) return; 
     setIsLiking(true);
+    console.log("id", id)
+    console.log("user",user)
+    console.log("date",date)
+    console.log("content",content)
+    console.log("initialLikes",initialLikes)
+    console.log("comments",comments)
 
     try {
       const response = await axios.post('/update-like', { postId: id });
@@ -30,8 +36,9 @@ const JournalItem = ({ id, user, date, content, initialLikes, comments }) => {
   };
 
   const handlePostComment = () => {
-    navigate('/journal_comment')
+    navigate(`/journal_comment/${id}`);
   }
+  
 
   return (
     <div className="journal-item">
@@ -54,10 +61,10 @@ const JournalItem = ({ id, user, date, content, initialLikes, comments }) => {
       </div>
       <div className="journal-footer">
         <div className="journal-action" onClick={handlePostLike}>
-          <FaHeart className="icon" /> <span>{likes}</span>
+          <FaHeart className="journalicon" /> <span>{likes}</span>
         </div>
         <div className="journal-action" onClick={handlePostComment}>
-          <FaComment className="icon" /> <span>{comments}</span>
+          <FaComment className="journalicon" /> <span>{comments}</span>
         </div>
       </div>
     </div>

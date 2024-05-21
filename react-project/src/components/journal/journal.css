@@ -132,9 +132,126 @@
     padding: 2px 5px;
 }
   
-.journal-action .icon {
-    margin-right: 5px;
-    font-size: 18px;
-    width: 40px;
+.journal-action .journalicon {
+    margin-right: 5px !important; 
+    font-size: 18px !important;
+    width: 40px !important;
+    height: 18px !important;
+    color: #212529 !important;
 }
+
+.comments-container {
+    width: 100%;
+    margin-top: 20px;
+  }
   
+.comment-item {
+    background-color: #e7e7e7;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 15px 15px 15px 25px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 30px;
+}
+
+.comment-user {
+    font-weight: bold;
+}
+
+.comment-date {
+        font-size: 0.8rem;
+        color: #666;
+}
+
+.comment-content {
+    margin-top: 5px;
+}
+
+.comment-content p {
+    margin: 0px;
+}
+
+.writecomment {
+    border: none;
+    background-color:  rgb(221, 221, 221);
+    border-radius: 20px;
+    padding: 6px 15px;
+    color: #414141;
+}
+
+.writecomment>svg {
+    width: 20px;
+    margin-left: 5px;
+}
+
+.comment-form {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.comment-form input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.comment-form button {
+    background-color: #555;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.div-write {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.writepost {
+    width: 100%;
+    padding: 22px 0;
+    max-width: 400px;
+    margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+  }
+  
+  .writepost textarea {
+    width: 85%;
+    height: 400px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .btnwriteend {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 35%;
+  }
+  
+  .btnwriteend:hover {
+    background-color: #ddd;
+  }

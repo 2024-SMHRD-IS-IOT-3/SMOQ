@@ -16,8 +16,12 @@ import Findpw from './components/login_join_find/Find_pw';
 import MainMgr from './components/main/Main_mag'
 import SelectUserData from './components/main/Select_user_data'
 import Journal from './components/journal/Journal';
+import Journalmgr from './components/journal/Journal_mgr';
 import Journalcomment from './components/journal/Journal_comment';
+import Journalcommentmgr from './components/journal/Journal_comment_mgr';
 import Kakao from './components/kakao/Kakao';
+import Write from './components/journal/Write';
+import Writemgr from './components/journal/Write_mgr';
 
 function App() {
   return (
@@ -52,7 +56,11 @@ function App() {
 
         {/* 저널 */}
         <Route path='/journal' element={<Journal />} />
-        <Route path='/journal_comment' element={<Journalcomment />} />
+        <Route path='/journal_mgr' element={<Journalmgr />} />
+        <Route path='/journal_comment/:id' element={<Journalcomment />} />
+        <Route path='/journal_comment_mgr/:id' element={<Journalcommentmgr />} />
+        <Route path='/write_mgr' element={<Writemgr />} />
+        <Route path='/write' element={<Write />} />
       </Routes>
     </div>
   );
