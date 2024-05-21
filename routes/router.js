@@ -5,7 +5,6 @@ const oracledb = require('oracledb')
 const path = require('path')
 const { sendEmail } = require('../config/email');
 
-
 // 메인 경로
 router.get('/', (req, res) => {
     console.log('누군가 메인페이지에 접근했습니다!');
@@ -443,7 +442,7 @@ router.post('/get-smoking-data', async (req, res) => {
 router.post('/handledate', async (req, res) => {
     console.log('최근 흡연 시간을 조회합니다.');
 
-    const user = 'user_email 13';
+    const user = 'limcon00@naver.com';
     const { date } = req.body;
     console.log('date', date, 'user',user);
 
@@ -478,7 +477,7 @@ router.post('/handledate', async (req, res) => {
     }
 });
 
-// 날짜 범위 조회하기(그래프)
+/** 날짜 범위 조회하기(그래프) */
 router.post('/graphDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
@@ -508,6 +507,121 @@ router.post('/graphDateRange', async (req, res) => {
                 res.json({result : result.rows})
             }
         })
+
+        await connection.close();
+    } catch (err) {
+        console.error('Error executing query:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+/** 게시글 목록 가져오기 */
+router.get('/journallist', async (req, res) => {
+    try {
+      const connection = await db.connectToOracle();
+      const sql = `SELECT POST_IDX, WRITING_USER, POST_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT, POST_LIKES FROM TB_POST`;
+      const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+  
+      const journalData = await Promise.all(result.rows.map(async (row) => {
+        const postContent = await lobToString(row.POST_CONTENT);
+        const commentCount = await getCommentCount(connection, row.POST_IDX);
+  
+        return {
+          user: row.WRITING_USER,
+          content: postContent,
+          date: row.CREATED_AT,
+          likes: row.POST_LIKES,
+          comments: commentCount
+        };
+      }));
+  
+      await connection.close();
+  
+      res.json({ success: true, data: journalData });
+    } catch (error) {
+      console.error('Failed to fetch journal posts:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch journal posts' });
+    }
+  });
+  
+  /** 댓글 개수 가져오기 */
+  async function getCommentCount(connection, postIdx) {
+    try {
+      const sql = `SELECT COUNT(*) AS COUNT FROM TB_COMMENT WHERE POST_IDX = :postIdx`;
+      const result = await connection.execute(sql, [postIdx], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+      return result.rows[0].COUNT || 0;
+    } catch (error) {
+      console.error('Failed to fetch comment count:', error);
+      return 0;
+    }
+  }
+  
+  /** LOB 데이터 처리 */
+  async function lobToString(lob) {
+    return new Promise((resolve, reject) => {
+      if (lob === null) {
+        resolve('');
+        return;
+      }
+      let content = '';
+      lob.setEncoding('utf8');
+      lob.on('data', (chunk) => {
+        content += chunk;
+      });
+      lob.on('end', () => {
+        resolve(content);
+      });
+      lob.on('error', (err) => {
+        reject(err);
+      });
+    });
+  }
+
+/** 게시물 좋아요 수 업데이트 */
+router.post('/update-like', async (req, res) => {
+    const { postId } = req.body;
+  
+    try {
+      const connection = await db.connectToOracle();
+      const sql = `UPDATE TB_POST SET POST_LIKES = POST_LIKES + 1 WHERE POST_IDX = :postId`;
+      await connection.execute(sql, [postId], { autoCommit: true });
+  
+      await connection.close();
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Failed to update likes:', error);
+      res.status(500).json({ success: false, message: 'Failed to update likes' });
+    }
+  });
+  
+
+/** 카카오 지도 */
+router.post('/handlemap', async(req, res)=> {
+    console.log('지도를 표시합니다');
+    const user = 'limcon00@naver.com';
+
+    try {
+        const connection = await db.connectToOracle();
+        const sql = `
+        SELECT smoke_loc
+        FROM tb_smoking_sensor
+        WHERE user_email = '${user}'
+        `;
+
+        console.log("Executing SQL:", sql);
+        oracledb.fetchAsString = [oracledb.DATE];
+
+        connection.execute(sql, function(err, result){
+            if(err){
+                console.log(err.message);
+                res.status(500).json({ error: 'Internal Server Error' });
+            } else {
+                console.log('success', result.rows);
+                // Parse the result to extract the smoke_loc values
+                const smokeLocs = result.rows.map(row => row[0]);
+                res.json({ result: smokeLocs });
+            }
+        });
 
         await connection.close();
     } catch (err) {

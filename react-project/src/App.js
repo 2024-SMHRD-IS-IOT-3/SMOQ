@@ -15,6 +15,9 @@ import Findemail from './components/login_join_find/Find_email';
 import Findpw from './components/login_join_find/Find_pw';
 import MainMgr from './components/main/Main_mag'
 import SelectUserData from './components/main/Select_user_data'
+import Journal from './components/journal/Journal';
+import Journalcomment from './components/journal/Journal_comment';
+import Kakao from './components/kakao/Kakao';
 
 function App() {
   return (
@@ -23,19 +26,33 @@ function App() {
         <Link to='/'></Link>
       </h1>
       <Routes>
+        {/* 처음 ~ 로그인, 회원가입, 이메일/비밀번호 찾기 */}
         <Route path='/' element={<First />} />
         <Route path='/join_first/:userType' element={<Joinfirst />} />
         <Route path='/join/:userTypeJoin' element={<Join />} />
         <Route path='/find_select' element={<Findselect />} />
         <Route path='/find_email/:userType' element={<Findemail />} />
         <Route path='/find_pw/:userType' element={<Findpw />} />
+
+        {/* 사용자 메인 */}
         <Route path='/main' element={<Main />} />
+
+        {/* 기록 */}
         <Route path='/Cal_main' element={<Calmain />} />
         <Route path='/Cal_Detail' element={<CalDetail />} />
         <Route path='/Graph' element={<Graph />} />
         
+        {/* 장소 */}
+        <Route path='/kakao' element={<Kakao />} />
+
+
+        {/* 관리자 메인 */}
         <Route path='/main_mgr' element={<MainMgr />} />
         <Route path='/select_user_data' element={<SelectUserData/>}/>
+
+        {/* 저널 */}
+        <Route path='/journal' element={<Journal />} />
+        <Route path='/journal_comment' element={<Journalcomment />} />
       </Routes>
     </div>
   );
