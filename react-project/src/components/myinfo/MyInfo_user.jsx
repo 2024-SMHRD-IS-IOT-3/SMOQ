@@ -29,14 +29,6 @@ const MyInfo_user = () => {
   return (
     <div className='myinfo-container'>
       <Header />
-        <div className='myinfo-header'>
-          <div className='profile-image-section'>
-            <img src='/path/to/profile_icon.png' alt="Profile" className='profile-image' />
-          </div>
-          <div className='user-info'>
-            <h2>홍길동</h2>
-          </div>
-        </div>
         <div className='myinfo-body'>
           <p>기본정보</p>
           <button className='profile-button' onClick={handleProfileEdit}>프로필 변경</button>
