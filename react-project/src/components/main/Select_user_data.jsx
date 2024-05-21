@@ -76,7 +76,6 @@ const Select_user_data = () => {
           )}
         </tbody>
       </table>
- 
       </div>
       <div className='footer'>
         <Footermgr/>

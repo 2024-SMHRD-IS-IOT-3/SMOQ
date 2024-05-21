@@ -59,10 +59,12 @@ const Detail = () => {
     };
 
     return (
-        <div>
-            <Header/>
 
-            <div className='datepicker-container'>
+        <div className='main-container'>
+            <Header/>
+            <div  className='cal-container'>
+            <div className='datepicker-container-detail' id='caldetail'>
+
                 <label htmlFor="start-date">시작 날짜 :</label>
                 <DatePicker
                     id="start-date"
@@ -74,9 +76,10 @@ const Detail = () => {
                 />부터
             </div>
 
-            <div>~</div>
+            <div className='caldetail-text'>~</div>
             
-            <div className="datepicker-container">
+            <div className="datepicker-container-detail">
+
                 <label htmlFor="end-date">종료 날짜:</label>
                 <DatePicker
                     id="end-date"
@@ -89,27 +92,30 @@ const Detail = () => {
                 />까지
             </div>
 
-            <button onClick={handleSearch}>조회하기</button>
+            <button onClick={handleSearch} className='checkbtn-detail'>조회하기</button>
 
-            
-            <div>
-                <h2>조회 결과</h2>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>일시</th>
-                            <th>장소</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {data.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item[0]}</td>
-                                <td>{item[1]}</td>
+            <hr/>
+            <div className='caldetail'>
+                    <h2 className='calbtn-title'>조회 결과</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>일시</th>
+                                <th>장소</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {data.map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item[0]}</td>
+                                    <td>{item[1]}</td>
+                                    <td>{item[2]}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
             <div className='footer'>

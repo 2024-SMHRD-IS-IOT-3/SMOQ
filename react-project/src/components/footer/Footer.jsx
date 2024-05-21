@@ -23,31 +23,31 @@ function Footer() {
           <Nav.Link href="/Cal_main" className={getNavLinkClass('/Cal_main')}>
             <div className="nav-item">
               <CgNotes className="nav-icon" />
-              <span>기록</span>
+              <span className={getNavLinkClass('/Cal_main')}>기록</span>
             </div>
           </Nav.Link>
-          <Nav.Link href="#" className={getNavLinkClass('#')}>
+          <Nav.Link href="/kakao" className={getNavLinkClass('/location')}>
             <div className="nav-item">
               <FaLocationDot className="nav-icon" />
-              <span>장소</span>
+              <span className={getNavLinkClass('/location')}>장소</span>
             </div>
           </Nav.Link>
-          <Nav.Link href="/main" className={getNavLinkClass('/')}>
+          <Nav.Link href="/main" className={getNavLinkClass('/main')}>
             <div className="nav-item">
               <HiMiniHome className="nav-icon" />
-              <span>메인</span>
+              <span className={getNavLinkClass('/main')}>메인</span>
             </div>
           </Nav.Link>
-          <Nav.Link href="#" className={getNavLinkClass('#')}>
+          <Nav.Link href="/journal" className={getNavLinkClass('/journal')}>
             <div className="nav-item">
               <TbMessageCircle2Filled className="nav-icon" />
-              <span>저널</span>
+              <span className={getNavLinkClass('/journal')}>저널</span>
             </div>
           </Nav.Link>
-          <Nav.Link href="/MyInfo_user" className={getNavLinkClass('/MyInfo_user')}>
+          <Nav.Link href="#" className={getNavLinkClass('/profile')}>
             <div className="nav-item">
               <BsFillPersonFill className="nav-icon" />
-              <span>내정보</span>
+              <span className={getNavLinkClass('/profile')}>내정보</span>
             </div>
           </Nav.Link>
         </Nav>

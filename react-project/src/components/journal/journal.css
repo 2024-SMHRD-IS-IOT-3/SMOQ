@@ -1,0 +1,140 @@
+/* styles.css */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 60px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    justify-content: center;
+}
+  
+.journal-container {
+    width: 100%;
+    max-width: 380px;
+    margin: 20px;
+}
+
+.div-search {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.searchinput-div {
+    width: 80%;
+    background-color: #e7e7e7;
+}
+  
+.search-input {
+    width: 40%;
+    padding: 8px;
+    border: none;
+    outline: none;
+    padding: 7px;
+    flex: 1;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.searchicon {
+    padding: 5px;
+    margin-right: 5px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.searchinput-div {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding-left: 5px;
+}
+
+.btnwrite {
+    border: none;
+    background-color:  rgb(221, 221, 221);
+    border-radius: 5px;
+    padding: 7px;
+    color: #414141;
+}
+  
+.journal-item {
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+  
+ .journal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background-color: rgb(221, 221, 221);
+    padding: 10px;
+}
+  
+.user-info {
+    display: flex;
+    flex-direction: row;
+}
+
+.user-icon2 {
+    font-size: 20px;
+}
+
+.user-icon2>svg {
+    width: 30px;
+    margin-bottom: 2px;
+}
+  
+.user-icon {
+    margin-right: 10px;
+    font-size: 30px;
+  }
+
+.user-date {
+    display: flex;
+    align-items: center;
+    align-items: flex-start;
+    flex-direction: column;
+}
+  
+.post-date {
+    font-size: 0.9rem;
+    color: #666;
+}
+  
+.journal-content {
+    margin-bottom: 10px;
+}
+  
+.journal-footer {
+    display: flex;
+    justify-content: space-evenly;
+}
+  
+.journal-action {
+    display: flex;
+    align-items: center;
+    background-color: #e7e7e7;
+    width: 25%;
+    height: 20%;
+    border-radius: 20px;
+    padding: 2px 5px;
+}
+  
+.journal-action .icon {
+    margin-right: 5px;
+    font-size: 18px;
+    width: 40px;
+}
+  

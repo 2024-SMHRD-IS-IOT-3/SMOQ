@@ -144,10 +144,21 @@ const Graph = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div className="container">
       <Header />
       <div className="controls">
         <button id='btn' onClick={handleCalendarClick}>캘린더</button>
+=======
+    <div className="main-container">
+      <Header />
+      <div className="controls">
+        <div className='cal-text'>
+          <button id='calbtn' onClick={handleCalendarClick}>캘린더</button>
+          <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
+        </div>
+        <div className='date-picker'>
+>>>>>>> 638558d203d5d9070cafa9838232e3b82051d888
         <div className="datepicker-container">
           <label htmlFor="start-date">시작 날짜:</label>
           <DatePicker
@@ -171,17 +182,31 @@ const Graph = () => {
             minDate={startDate}
           />
         </div>
+<<<<<<< HEAD
         <button onClick={handleSearch}>조회하기</button>
       </div>
       <div>
         <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
       </div>
+=======
+        </div>
+        <button onClick={handleSearch} className='checkbtn'>조회하기</button>
+      </div>
+      
+>>>>>>> 638558d203d5d9070cafa9838232e3b82051d888
       <Routes>
         <Route path='/Cal_Detail' element={<Cal_Detail />} />
         <Route path='/Cal_Main' element={<Cal_main />} />
       </Routes>
+<<<<<<< HEAD
       <div className="graph">
         <Bar data={chartData} options={options} plugins={[ChartDataLabels]} />
+=======
+      <div className="graph-container">
+        <div className="graph">
+          <Bar data={chartData} options={options} plugins={[ChartDataLabels]} />
+        </div>
+>>>>>>> 638558d203d5d9070cafa9838232e3b82051d888
       </div>
       <div className='footer'><Menu /></div>
     </div>

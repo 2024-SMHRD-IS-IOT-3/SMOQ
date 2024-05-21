@@ -40,6 +40,7 @@ const Cal_main = () => {
   };
 
   return (
+<<<<<<< HEAD
     <div>
       <Header />
       <button id='btn' onClick={handleGraphClick}>그래프</button>
@@ -50,11 +51,30 @@ const Cal_main = () => {
 
       <div>
         <Cal_real selectedDate={selectedDate} onDateChange={handleDateChange} />
+=======
+    <div className='main-container'>
+      <Header />
+      <div className='cal-container'>
+        <div className='cal-text'>
+          <button id='calbtn' onClick={handleGraphClick}>그래프</button>
+          <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
+        </div>
+      
+      <div className='cal'>
+        <div className='cal-real'>
+        <Cal_real selectedDate={selectedDate} onDateChange={handleDateChange} />
+        </div>
+>>>>>>> 638558d203d5d9070cafa9838232e3b82051d888
         <div>
           {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
         </div>
         <hr />
+<<<<<<< HEAD
         <Cal_table data={data} /> {/* 데이터를 props로 전달 */}
+=======
+        <Cal_table data={data} />
+      </div>
+>>>>>>> 638558d203d5d9070cafa9838232e3b82051d888
       </div>
 
       <div className='footer'><Menu /></div>
