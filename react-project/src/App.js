@@ -2,7 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-calendar/dist/Calendar.css';
 
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, BrowserRouter } from 'react-router-dom';
 import First from './components/login_join_find/First';
 import Main from './components/main/Main';
 import Calmain from './components/cal/Cal_main';
@@ -16,28 +16,33 @@ import Findpw from './components/login_join_find/Find_pw';
 import MainMgr from './components/main/Main_mag'
 import SelectUserData from './components/main/Select_user_data'
 
+
 function App() {
   return (
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
     <div className='App'>
       <h1>
         <Link to='/'></Link>
       </h1>
       <Routes>
-        <Route path='/' element={<First />} />
-        <Route path='/join_first/:userType' element={<Joinfirst />} />
-        <Route path='/join/:userTypeJoin' element={<Join />} />
-        <Route path='/find_select' element={<Findselect />} />
-        <Route path='/find_email/:userType' element={<Findemail />} />
-        <Route path='/find_pw/:userType' element={<Findpw />} />
-        <Route path='/main' element={<Main />} />
-        <Route path='/Cal_main' element={<Calmain />} />
-        <Route path='/Cal_Detail' element={<CalDetail />} />
-        <Route path='/Graph' element={<Graph />} />
         
-        <Route path='/main_mgr' element={<MainMgr />} />
-        <Route path='/select_user_data' element={<SelectUserData/>}/>
+        <Route path={'/'} element={<First />} />
+        <Route path={'/join_first/:userType'} element={<Joinfirst />} />
+        <Route path={'/join/:userTypeJoin'} element={<Join />} />
+        <Route path={'/find_select'} element={<Findselect />} />
+        <Route path={'/find_email/:userType'} element={<Findemail />} />
+        <Route path={'/find_pw/:userType'} element={<Findpw />} />
+        <Route path={'/main'} element={<Main />} />
+        <Route path={'/Cal_main'} element={<Calmain />} />
+        <Route path={'/Cal_Detail'} element={<CalDetail />} />
+        <Route path={'/Graph'} element={<Graph />} />
+        
+        <Route path={'/main_mgr'} element={<MainMgr />} />
+        <Route path={'/select_user_data'} element={<SelectUserData/>}/>
       </Routes>
+      
     </div>
+    </BrowserRouter>
   );
 }
 
