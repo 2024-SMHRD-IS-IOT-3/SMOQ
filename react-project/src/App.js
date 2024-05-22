@@ -31,7 +31,7 @@ import MyInfo_user_Resign from './components/myinfo/MyInfo_user_Resign'
 import MyInfo_mgr from './components/myinfo/MyInfo_mgr';
 import MyInfo_mgr_ProfileEdit from './components/myinfo/MyInfo_mgr_ProfileEdit';
 import MyInfo_mgr_PWEdit from './components/myinfo/MyInfo_mgr_PWEdit';
-import MyInfo_mgr_User from './components/myinfo/MyInfo_mgr_User';
+import MyInfo_mgr_User from './components/myinfo/MyInfo_mgr_User'; /**주영빈 */
 import MyInfo_mgr_Feedback from './components/myinfo/MyInfo_mgr_Feedback';
 import MyInfo_mgr_Resign from './components/myinfo/MyInfo_mgr_Resign'
 
