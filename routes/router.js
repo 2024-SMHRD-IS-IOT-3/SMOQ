@@ -204,7 +204,7 @@ router.post('/login', async (req, res) => {
         if (userType === 'personal') {
             sql = `SELECT USER_EMAIL, JOINED_AT FROM TB_USER WHERE USER_EMAIL = :email AND USER_PW = :password`;
         } else {
-            sql = `SELECT MGR_EMAIL, JOINED_AT FROM TB_MANAGER WHERE MGR_EMAIL = :email AND MGR_PW = :password`;
+            sql = `SELECT MGR_EMAIL, CREATED_AT FROM TB_MANAGER WHERE MGR_EMAIL = :email AND MGR_PW = :password`;
         }
         
         const params = { email, password };
@@ -895,7 +895,6 @@ router.post('/update-profile', async (req, res) => {
         res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
     }
 });
-
 /** 문의하기 메일 발송 */
 router.post('/sendFeedback', async (req, res) => {
     const { category, message } = req.body;

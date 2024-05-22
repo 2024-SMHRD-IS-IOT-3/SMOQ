@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../axios";
-import Header from "../header/Header";
+import Header_mgr from "../header/Header_mgr";
 import Footermgr from "../footer/Footer_mgr";
 import { useNavigate } from "react-router-dom";
 import "./myinfo.css";
@@ -8,7 +8,6 @@ import "./myinfo.css";
 const ProfileEdit = () => {
   const [profile, setProfile] = useState({
     profilePicture: "/path/to/default_profile.jpg",
-    nickname: "",
     name: "",
     email: "",
     birthday: "",
@@ -20,37 +19,23 @@ const ProfileEdit = () => {
     const fetchUserProfile = async () => {
       const email = sessionStorage.getItem("email");
       try {
-        const response = await axios.post("/user-profile", { email });
-        const userData = response.data.userProfile;
-
-        // Format the date from "20-DEC-97" to "1997-12-20"
-        const formattedBirthday = new Date(userData.USER_BIRTHDATE)
-          .toISOString()
-          .split("T")[0];
+        const response = await axios.post("/mgr-profile", { email });
+        const mgrData = response.data.mgrProfile;
 
         setProfile({
           profilePicture:
-            userData.profilePicture || "/path/to/default_profile.jpg",
-          nickname: userData.USER_NICK || "",
-          name: userData.USER_NAME || "",
-          email: userData.USER_EMAIL || "",
-          birthday: formattedBirthday,
+            mgrData.profilePicture || "/path/to/default_profile.jpg",
+          name: mgrData.MGR_NAME || "",
+          email: mgrData.MGR_EMAIL || "",
+          org: mgrData.MGR_ORG || "",
         });
       } catch (error) {
-        console.error("Failed to fetch user profile:", error);
+        console.error("Failed to fetch mgr profile:", error);
       }
     };
 
     fetchUserProfile();
   }, []);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProfile((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
 
   const handleCancel = () => {
     navigate("/MyInfo_mgr");
@@ -73,7 +58,7 @@ const ProfileEdit = () => {
 
   return (
     <div className="myinfo-container">
-      <Header />
+      <Header_mgr />
       <div className="myinfo-header">
         <h2>프로필 변경</h2>
       </div>
@@ -92,19 +77,10 @@ const ProfileEdit = () => {
           </div>
         </div>
         <div className="form-group">
-          <label htmlFor="nickname">닉네임</label>
-          <input
-            type="text"
-            id="nickname"
-            name="nickname"
-            value={profile.nickname}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="form-group">
           <label htmlFor="email">이메일</label>
           <input
             type="text"
+            className="myinput"
             id="email"
             name="email"
             value={profile.email}
@@ -115,6 +91,7 @@ const ProfileEdit = () => {
           <label htmlFor="name">이름</label>
           <input
             type="text"
+            className="myinput"
             id="name"
             name="name"
             value={profile.name}
@@ -122,12 +99,13 @@ const ProfileEdit = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="birthday">생년월일</label>
+          <label htmlFor="org">소속기관</label>
           <input
-            type="date"
-            id="birthday"
-            name="birthday"
-            value={profile.birthday}
+            type="text"
+            className="myinput"
+            id="org"
+            name="org"
+            value={profile.org}
             disabled
           />
         </div>

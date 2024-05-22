@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
-import axios from "../../axios";
 import "./myinfo.css";
 
 const MyInfo_user = () => {
@@ -24,26 +23,7 @@ const MyInfo_user = () => {
     navigate("/MyInfo_user_Feedback");
   };
 
-  const handleResign = async () => {
-    try {
-      const email = sessionStorage.getItem("email");
-      console.log(email);
-      const response = await axios.post("/resign", { email });
-
-      if (response.data.success) {
-        console.log("ab");
-        sessionStorage.removeItem("email");
-        alert("회원 탈퇴가 성공적으로 처리되었습니다.");
-        navigate("/");
-      } else {
-        alert("회원 탈퇴에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("Error resigning:", error);
-      alert("회원 탈퇴 중 오류가 발생했습니다.");
-    }
-  };
-
+  
   const handleLogout = () => {
     const confirmLogout = window.confirm("로그아웃 하시겠습니까?");
     if (confirmLogout) {
@@ -52,6 +32,10 @@ const MyInfo_user = () => {
       // Navigate to the '/' page
       navigate("/");
     }
+  };
+
+  const handleResign = () => {
+    navigate("/MyInfo_user_Resign");
   };
 
   return (
