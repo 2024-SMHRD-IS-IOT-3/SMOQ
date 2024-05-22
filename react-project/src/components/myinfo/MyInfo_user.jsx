@@ -26,6 +26,13 @@ const MyInfo_user = () => {
     navigate('/MyInfo_user_Resign');
   };
 
+  const handleLogout = () => {
+    // Clear sessionStorage
+    sessionStorage.clear();
+    // Navigate to the '/' page
+    navigate('/');
+  };
+
   return (
     <div className='myinfo-container'>
       <Header />
@@ -41,7 +48,7 @@ const MyInfo_user = () => {
         </div>
         <div className='myinfo-body'>
           <p>계정관리</p>
-          <button className='profile-button'>로그아웃</button>
+          <button className='profile-button' onClick={handleLogout}>로그아웃</button>
           <button className='profile-button' onClick={handleResign}>회원 탈퇴</button>
         </div>
       <div className='footer'>
