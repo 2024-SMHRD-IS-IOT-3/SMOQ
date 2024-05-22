@@ -4,6 +4,7 @@ const db = require('../config/db');
 const oracledb = require('oracledb')
 const path = require('path')
 const { sendEmail } = require('../config/email');
+const bcrypt = require('bcrypt');
 
 // 메인 경로
 router.get('/', (req, res) => {
@@ -727,48 +728,59 @@ router.post('/post/:id/comment', async (req, res) => {
 });
 
 /** 게시글을 작성 */
-router.post('/writepost', async (req, res) => {
-    const { content, email } = req.body;
-
-  
-    try {
-      const connection = await db.connectToOracle();
-      const sql = `INSERT INTO TB_POST (POST_CONTENT, CREATED_AT, WRITING_USER)
-      VALUES (
-          :content,
-          SYSDATE,
-          (SELECT writing_user FROM TB_WRITING_USER WHERE USER_EMAIL = :email)
-      )`;
-      const params = { content, email};
-  
-      await connection.execute(sql, params, { autoCommit: true });
-  
-      res.json({ success: true, message: 'Post saved successfully.' });
-    } catch (error) {
-      console.error('Failed to save post:', error);
-      res.status(500).json({ success: false, message: 'Failed to save post', error: error.message });
-    } 
-  });
-
-/** 사용자 프로필 가져오기 */
-router.get('/user-profile/:email', async (req, res) => {
-    const userEmail = req.params.email;
-
+router.post('/user-profile', async (req, res) => {
+    const { email } = req.body;
+    console.log('Fetching user profile with email:', email); // Add console log for email
+    
     try {
         const connection = await db.connectToOracle();
+        console.log("user-profile"); // Add console log for indication
         
         // 사용자 정보를 가져오는 SQL 쿼리
         const sql = `
-            SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, USER_SMOKE_CNT
-            FROM TB_USER
-            WHERE USER_EMAIL = :userEmail
+        SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
+        FROM TB_USER
+        WHERE USER_EMAIL = :email
         `;
         
         // SQL 쿼리 실행
-        const result = await connection.execute(sql, [userEmail], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         await connection.close();
+        console.log('User profile query result:', result.rows); // Add console log for query result
+        
+        // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
+        if (result.rows.length > 0) {
+            const userProfile = result.rows[0];
+            res.json({ success: true, userProfile });
+        } else {
+            res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+    } catch (error) {
+        console.error('사용자 프로필 가져오기 실패:', error);
+        res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
+    }
+});
 
+  /** 유저 프로필 가져오기 */
+  router.post('/user-profile', async (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+    try {
+        const connection = await db.connectToOracle();
+        console.log("user-profile");
+        // 사용자 정보를 가져오는 SQL 쿼리
+        const sql = `
+        SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
+FROM TB_USER
+WHERE USER_EMAIL = :email;
+`;
+        
+        // SQL 쿼리 실행
+        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        await connection.close();
+        console.log(result.rows);
         // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
         if (result.rows.length > 0) {
             const userProfile = result.rows[0];
@@ -786,6 +798,7 @@ router.get('/user-profile/:email', async (req, res) => {
 router.post('/update-profile', async (req, res) => {
     console.log("Update profile endpoint hit with data:", req.body);
     const { email, newNickname } = req.body;
+    // Rest of your code...
 
     try {
         const connection = await db.connectToOracle();
@@ -819,6 +832,75 @@ router.post('/update-profile', async (req, res) => {
         console.error('프로필 업데이트 실패:', error);
         res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
     }
+});
+
+/** 문의하기 메일 발송 */
+router.post('/sendFeedback', async (req, res) => {
+    const { category, message } = req.body;
+    console.log("message",category, message)
+    const emailContent = `카테고리: ${category}\n\n ${message}`;
+    
+    try {
+        await sendEmail('g8793173@gmail.com', 'SMOQ 문의', emailContent);
+        console.log('success')
+        res.status(200).json({ success: true, message: 'Feedback sent successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to send feedback' });
+    }
+});
+
+
+/** 비밀번호 변경 */
+router.post('/changePassword', async (req, res) => {
+    const { email, currentPassword, newPassword } = req.body;
+
+    console.log("changePassword");
+    console.log(email);
+
+
+    try {
+        const connection = await db.connectToOracle();
+
+        const result = await connection.execute(
+            'SELECT USER_PW FROM TB_USER WHERE USER_EMAIL = :email',
+            { email }
+        );
+
+        console.log(email);
+        console.log(result.rows);
+        console.log('1');
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        console.log('2');
+        const dbPassword = result.rows[0][0];
+        console.log(dbPassword);
+        console.log(currentPassword)
+        console.log('3');
+
+        if (currentPassword !== dbPassword) {
+            console.log("a");
+            return res.status(400).json({ success: false, message: '현재 비밀번호가 일치하지 않습니다.' });
+        }
+
+        console.log('4');
+
+        await connection.execute(
+            'UPDATE TB_USER SET USER_PW = :newPassword WHERE USER_EMAIL = :email',
+            { newPassword, email },
+            { autoCommit: true }
+        );
+
+        console.log(result.rows);
+
+        res.status(200).json({ success: true, message: '비밀번호가 성공적으로 변경되었습니다.' });
+    } catch (error) {
+        console.error('비밀번호 변경 실패:', error);
+        res.status(500).json({ success: false, message: '비밀번호 변경 실패' });
+    } 
+
 });
 
 module.exports = router;

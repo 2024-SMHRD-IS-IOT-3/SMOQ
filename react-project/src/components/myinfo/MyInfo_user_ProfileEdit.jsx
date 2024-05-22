@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from '../../axios';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
 
@@ -12,23 +13,21 @@ const ProfileEdit = () => {
   });
 
   useEffect(() => {
-    // Fetch user profile data from backend when component mounts
     const fetchUserProfile = async () => {
-      try {
-        // 세션 스토리지에서 이메일 가져오기
-        const userEmail = sessionStorage.getItem('email');
-
-        const response = await fetch(`/api/user-profile/${userEmail}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user profile');
-        }
-        const userData = await response.json();
+      const email = sessionStorage.getItem("email");
+      try {    
+        const response = await axios.post('/user-profile', { email });
+        const userData = response.data.userProfile;
+    
+        // Format the date from "20-DEC-97" to "1997-12-20"
+        const formattedBirthday = new Date(userData.USER_BIRTHDATE).toISOString().split('T')[0];
+    
         setProfile({
-          profilePicture: userData.userProfile.profilePicture || '/path/to/default_profile.jpg',
-          nickname: userData.userProfile.USER_NICK || '',
-          name: userData.userProfile.USER_NAME || '',
-          email: userData.userProfile.USER_EMAIL || '',
-          birthday: userData.userProfile.USER_BIRTHDATE || '1990-01-01'
+          profilePicture: userData.profilePicture || '/path/to/default_profile.jpg',
+          nickname: userData.USER_NICK || '',
+          name: userData.USER_NAME || '',
+          email: userData.USER_EMAIL || '',
+          birthday: formattedBirthday
         });
       } catch (error) {
         console.error('Failed to fetch user profile:', error);
@@ -36,7 +35,7 @@ const ProfileEdit = () => {
     };
 
     fetchUserProfile();
-  }, []); // Run effect only once on mount
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,19 +49,12 @@ const ProfileEdit = () => {
     event.preventDefault();
     
     try {
-      const response = await fetch('/api/update-profile', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            email: profile.email,
-            newNickname: profile.nickname
-        })
-    });
+      const res = await axios.post('/update-profile', {
+        email: profile.email,
+        newNickname: profile.nickname
+      });
 
-      const data = await response.json();
-      console.log(data); // Log response from the server
+      console.log(res.data); // 서버 응답 로그
     } catch (error) {
       console.error('Profile update failed:', error);
     }

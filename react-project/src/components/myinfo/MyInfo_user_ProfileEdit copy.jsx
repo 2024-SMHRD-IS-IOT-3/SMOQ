@@ -5,10 +5,10 @@ import Footer from '../footer/Footer';
 const ProfileEdit = () => {
   const [profile, setProfile] = useState({
     profilePicture: '/path/to/default_profile.jpg',
-    nickname: '홍길동',
-    name: '홍길동',
-    email: 'user@example.com',
-    birthday: '1990-01-01'
+    nickname: '',
+    name: '',
+    email: '',
+    birthday: ''
   });
 
   const handleChange = (e) => {
@@ -23,7 +23,7 @@ const ProfileEdit = () => {
     event.preventDefault();
     
     try {
-      const response = await fetch('/api/update-profile', {
+      const response = await fetch('/update-profile', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
