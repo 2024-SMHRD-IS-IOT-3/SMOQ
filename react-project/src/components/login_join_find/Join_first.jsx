@@ -63,7 +63,7 @@ const Join_first = () => {
       .post("/sendcode", { authcode }, { withCredentials: true })
       .then((res) => {
         console.log(res.data);
-        if (res.data["message"] == "success") {
+        if (res.data["message"] === "success") {
           alert("인증되었습니다.");
           navigate("/join/manager", { state: { email } });
         } else {

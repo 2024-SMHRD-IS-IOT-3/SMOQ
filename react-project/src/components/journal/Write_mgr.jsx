@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Header from "../header/Header";
-import Footer from "../footer/Footer";
 import axios from "../../axios";
 import "./journal.css";
+import { useLocation } from "react-router-dom";
+import Footermgr from "../footer/Footer_mgr";
 
 const Write = () => {
+  const location = useLocation();
+  const { user } = location.state || {};
   const [content, setContent] = useState("");
 
   const handleContentChange = (e) => {
@@ -13,12 +16,14 @@ const Write = () => {
 
   const handleWritePost = async () => {
     console.log("handleWritePost");
+    console.log(user);
+    const email = sessionStorage.getItem("email");
     try {
-      const res = await axios.post("/writepost", { content });
+      const res = await axios.post("/writepost", { content, email });
       console.log(res.data);
       if (res.data) {
         alert("작성되었습니다.");
-        window.location.href = "/journal_mgr";
+        window.location.href = "/journal";
       }
     } catch (error) {
       console.error("Failed to save post:", error);
@@ -43,7 +48,7 @@ const Write = () => {
         </div>
       </div>
       <div className="footer">
-        <Footer />
+        <Footermgr />
       </div>
     </div>
   );

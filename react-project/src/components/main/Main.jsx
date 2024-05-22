@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
-import Menu from "../footer/Footer";
+import Footer from "../footer/Footer";
 import ProgressTimeline from "./ProgressTimeline";
 import axios from "../../axios";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -471,9 +471,8 @@ const Main = () => {
           </div>
         </div>
       </div>
-
       <div className="footer">
-        <Menu />
+        <Footer />
       </div>
     </div>
   );

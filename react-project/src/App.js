@@ -22,6 +22,12 @@ import Journalcommentmgr from './components/journal/Journal_comment_mgr';
 import Kakao from './components/kakao/Kakao';
 import Write from './components/journal/Write';
 import Writemgr from './components/journal/Write_mgr';
+import MyInfo_user from './components/myinfo/MyInfo_user';
+import MyInfo_user_ProfileEdit from './components/myinfo/MyInfo_user_ProfileEdit';
+import MyInfo_user_PWEdit from './components/myinfo/MyInfo_user_PWEdit';
+import MyInfo_user_Device from './components/myinfo/MyInfo_user_Device';
+import MyInfo_user_Feedback from './components/myinfo/MyInfo_user_Feedback';
+import MyInfo_user_Resign from './components/myinfo/MyInfo_user_Resign';
 
 function App() {
   return (
@@ -61,6 +67,15 @@ function App() {
         <Route path='/journal_comment_mgr/:id' element={<Journalcommentmgr />} />
         <Route path='/write_mgr' element={<Writemgr />} />
         <Route path='/write' element={<Write />} />
+        <Route path='/journal_comment' element={<Journalcomment />} />
+
+        {/* 내정보 */}
+        <Route path='/MyInfo_user' element={<MyInfo_user/>} />
+        <Route path='/MyInfo_user_ProfileEdit' element={<MyInfo_user_ProfileEdit/>} />
+        <Route path='/MyInfo_user_PWEdit' element={<MyInfo_user_PWEdit/>} />
+        <Route path='/MyInfo_user_Device' element={<MyInfo_user_Device/>} />
+        <Route path='/MyInfo_user_Feedback' element={<MyInfo_user_Feedback/>} />
+        <Route path='/MyInfo_user_Resign' element={<MyInfo_user_Resign/>} />
       </Routes>
     </div>
   );

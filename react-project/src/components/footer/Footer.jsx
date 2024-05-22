@@ -1,4 +1,3 @@
-// Footer.js
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
@@ -45,7 +44,7 @@ function Footer() {
               <span className={getNavLinkClass('/journal')}>저널</span>
             </div>
           </Nav.Link>
-          <Nav.Link href="#" className={getNavLinkClass('/profile')}>
+          <Nav.Link href="/MyInfo_user" className={getNavLinkClass('/MyInfo_user')}>
             <div className="nav-item">
               <BsFillPersonFill className="nav-icon" />
               <span className={getNavLinkClass('/profile')}>내정보</span>

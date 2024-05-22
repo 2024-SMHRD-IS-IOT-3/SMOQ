@@ -34,7 +34,10 @@ function Footermgr() {
             </div>
           </Nav.Link>
 
-          <Nav.Link href="#" className={getNavLinkClass("/profile")}>
+          <Nav.Link
+            href="/MyInfo_user"
+            className={getNavLinkClass("/MyInfo_user")}
+          >
             <div className="nav-item">
               <BsFillPersonFill className="nav-icon" />
               <span>내정보</span>
