@@ -17,19 +17,19 @@ router.get('/', (req, res) => {
 router.post('/selectsmokingtime', async (req, res) => {
 
     let { email } = req.body;
-
+    console.log("email",email)
     try {
         const connection = await db.connectToOracle();
         const sql = `SELECT TO_CHAR(smoke_time, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') as smoke_time
                      FROM tb_smoking_sensor a
                      where user_email = :email
                      and a.sensor_idx = (select max(sensor_idx)
-                                           from tb_smoking_sensor )`;
+                                           from tb_smoking_sensor where user_email = :email )`;
 
 
         oracledb.fetchAsString = [oracledb.DATE];
-        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-
+        const result = await connection.execute(sql, [email, email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        console.log(result)
        
             result.rows.forEach(row => {
                 const dateStr = row.SMOKE_TIME; 
@@ -347,7 +347,8 @@ router.post('/find-user', async (req, res) => {
 
     try {
         const connection = await db.connectToOracle();
-        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :birthDate`;
+        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :birthDate
+        `;
         const params = { name, birthDate };
 
         const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
@@ -366,11 +367,16 @@ router.post('/find-user', async (req, res) => {
 
 /** 모든 사용자 정보 조회 */
 router.get('/all-users', async (req, res) => {
+    const sessionMgrEmail = req.session.mgrEmail;
     try {
         const connection = await db.connectToOracle();
-        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER`;
+        const sql = `SELECT USER_NAME, USER_BIRTHDATE 
+                                FROM TB_USER 
+                                WHERE USER_EMAIL IN (SELECT USER_EMAIL 
+                             FROM TB_MANAGEMENT
+                             WHERE MGR_ID = :sessionMgrEmail)`;
 
-        const result = await connection.execute(sql, [], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        const result = await connection.execute(sql, [sessionMgrEmail], { outFormat: oracledb.OUT_FORMAT_OBJECT });
         await connection.close();
 
         if (result.rows.length > 0) {

@@ -55,7 +55,9 @@ const Main = () => {
         let quitTimeStr;
         if (res.data && res.data.length > 0) {
           quitTimeStr = res.data[0].SMOKE_TIME;
+          console.log("quitTime", quitTimeStr);
         } else {
+          console.log("res", res.data);
           quitTimeStr = sessionStorage.getItem("joined_at");
         }
 
@@ -84,7 +86,7 @@ const Main = () => {
       const updateElapsedTime = () => {
         // 현재 시간
         const now = new Date();
-
+        console.log("now 시간", now);
         // 현재 시간 년, 월, 일, 시, 분, 초
         const nowYear = now.getFullYear();
         const nowMonth = now.getMonth() + 1;
@@ -94,12 +96,12 @@ const Main = () => {
         const nowSecond = now.getSeconds();
 
         // 흡연 시간 년, 월, 일, 시, 분, 초
-        const quitYear = quitTime.getFullYear();
-        const quitMonth = quitTime.getMonth() + 1;
-        const quitDay = quitTime.getDate();
-        const quitHour = quitTime.getHours();
-        const quitMinute = quitTime.getMinutes();
-        const quitSecond = quitTime.getSeconds();
+        const quitYear = quitTime.getUTCFullYear();
+        const quitMonth = quitTime.getUTCMonth() + 1;
+        const quitDay = quitTime.getUTCDate();
+        const quitHour = quitTime.getUTCHours();
+        const quitMinute = quitTime.getUTCMinutes();
+        const quitSecond = quitTime.getUTCSeconds();
 
         // 현재 시간 - 흡연 시간
         let diffYear = nowYear - quitYear;
