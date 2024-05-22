@@ -214,7 +214,8 @@ router.post('/login', async (req, res) => {
 
         if (result.rows.length > 0) {
             const user = result.rows[0];
-            req.session.email = email; // 세션에 이메일 저장
+            req.session.email = email;
+            req.session.joined_at = joi
             res.json({ 
                 success: true, 
                 message: '로그인 성공', 
@@ -766,7 +767,6 @@ router.post('/sendFeedback', async (req, res) => {
     }
 });
 
-
 /** 비밀번호 변경 */
 router.post('/changePassword', async (req, res) => {
     const { email, currentPassword, newPassword } = req.body;
@@ -818,5 +818,66 @@ router.post('/changePassword', async (req, res) => {
         res.status(500).json({ success: false, message: '비밀번호 변경 실패' });
     } 
 });
+
+/** 회원탈퇴 */
+router.post('/resign', async (req, res) => {
+    const { email } = req.body;
+    let connection;
+
+    console.log(email)
+
+    try {
+      connection = await db.connectToOracle();
+  
+      await connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+  
+      await connection.execute(
+        'DELETE FROM TB_SMOKING_SENSOR WHERE USER_EMAIL = :email',
+        { email }
+      );
+
+      const result = await connection.execute(
+        'SELECT WRITING_USER FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
+        { email }
+      );
+  
+      if (result.rows.length === 0) {
+        return res.status(400).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+      }
+  
+      const writingUser = result.rows[0][0];
+      await connection.execute(
+        'DELETE FROM TB_COMMENT WHERE WRITING_USER = :writingUser',
+        { writingUser }
+      );
+      await connection.execute(
+        'DELETE FROM TB_POST WHERE WRITING_USER = :writingUser',
+        { writingUser }
+      );
+      await connection.execute(
+        'DELETE FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
+        {  email }
+      );
+      await connection.execute(
+        'DELETE FROM TB_USER WHERE USER_EMAIL = :email',
+        {  email }
+      );
+  
+      await connection.commit();
+  
+      res.status(200).json({ success: true, message: '회원 탈퇴가 성공적으로 처리되었습니다.' });
+    } catch (error) {
+      if (connection) {
+        try {
+          await connection.rollback();
+        } catch (err) {
+          console.error('Failed to rollback transaction:', err);
+        }
+      }
+      console.error('회원 탈퇴 실패:', error);
+      res.status(500).json({ success: false, message: '회원 탈퇴 실패' });
+    } 
+  });
+  
 
 module.exports = router;
