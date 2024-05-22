@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 import Footermgr from "../footer/Footer_mgr";
+import "./myinfo.css";
 
 const MyInfo_mgr = () => {
   const navigate = useNavigate();
