@@ -98,6 +98,7 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="currentPassword">현재 비밀번호</label>
           <input
+            className="myinput"
             type="password"
             id="currentPassword"
             name="currentPassword"
@@ -108,6 +109,7 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="newPassword">변경할 비밀번호</label>
           <input
+            className="myinput"
             type="password"
             id="newPassword"
             name="newPassword"
@@ -119,6 +121,7 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="confirmPassword">비밀번호 재확인</label>
           <input
+            className="myinput"
             type="password"
             id="confirmPassword"
             name="confirmPassword"

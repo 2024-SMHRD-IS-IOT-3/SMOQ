@@ -25,7 +25,7 @@ import Writemgr from './components/journal/Write_mgr';
 import MyInfo_user from './components/myinfo/MyInfo_user';
 import MyInfo_user_ProfileEdit from './components/myinfo/MyInfo_user_ProfileEdit';
 import MyInfo_user_PWEdit from './components/myinfo/MyInfo_user_PWEdit';
-import MyInfo_user_Device from './components/myinfo/MyInfo_user_Device';
+// import MyInfo_user_Device from './components/myinfo/MyInfo_user_Device';
 import MyInfo_user_Feedback from './components/myinfo/MyInfo_user_Feedback';
 import MyInfo_user_Resign from './components/myinfo/MyInfo_user_Resign'
 import MyInfo_mgr from './components/myinfo/MyInfo_mgr';
@@ -79,7 +79,7 @@ function App() {
         <Route path='/MyInfo_user' element={<MyInfo_user/>} />
         <Route path='/MyInfo_user_ProfileEdit' element={<MyInfo_user_ProfileEdit/>} />
         <Route path='/MyInfo_user_PWEdit' element={<MyInfo_user_PWEdit/>} />
-        <Route path='/MyInfo_user_Device' element={<MyInfo_user_Device/>} />
+        {/* <Route path='/MyInfo_user_Device' element={<MyInfo_user_Device/>} /> */}
         <Route path='/MyInfo_user_Feedback' element={<MyInfo_user_Feedback/>} />
         <Route path='/MyInfo_user_Resign' element={<MyInfo_user_Resign/>} />
 

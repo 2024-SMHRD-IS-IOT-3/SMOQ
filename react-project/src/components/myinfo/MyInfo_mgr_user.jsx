@@ -22,10 +22,8 @@ function User() {
     try {
       const response = await axios.post("/managed-users", { mgremail });
       console.log("Response from server:", response); // 서버 응답 확인용 로그
-      console.log("Data from server:", response.data); // 서버에서 받은 데이터 확인용 로그
       if (response.data.success) {
         setManagedUsers(response.data.managedUsers);
-        console.log(managedUsers)
         setMessage("");
       } else {
         setManagedUsers([]);
@@ -43,9 +41,11 @@ function User() {
 
   const handleAddUser = async () => {
     const mgremail = sessionStorage.getItem("email");
+    console.log("Adding user with manager email:", mgremail); // Logging
+    console.log("Adding new user email:", newUserEmail); // Logging
     try {
       const response = await axios.post("/add-user", { mgremail, userEmail: newUserEmail });
-      console.log("result", response.data.success);
+      console.log("Result from server:", response.data);
       if (response.data.success) {
         alert('유저를 등록했습니다');
         fetchManagedUsers();
@@ -61,21 +61,23 @@ function User() {
   };
 
   const handleDeleteUser = async (userEmail) => {
-    console.log("User email:", userEmail);
+    console.log("Deleting user with email:", userEmail); // Logging
     const mgrId = sessionStorage.getItem("email");
+    console.log("Manager ID:", mgrId); // Logging
     try {
-        const response = await axios.post("/delete-user", { mgrId: mgrId, userEmail: userEmail });
-        if (response.data.success) {
-            fetchManagedUsers();
-        } else {
-            console.error("사용자 삭제 실패:", response.data.message);
-            setMessage("사용자 삭제 실패");
-        }
-    } catch (error) {
-        console.error("사용자 삭제 실패:", error);
+      const response = await axios.post("/delete-user", { mgrId, userEmail });
+      console.log("Response from server:", response); // Logging
+      if (response.data.success) {
+        fetchManagedUsers();
+      } else {
+        console.error("사용자 삭제 실패:", response.data.message);
         setMessage("사용자 삭제 실패");
+      }
+    } catch (error) {
+      console.error("사용자 삭제 실패:", error);
+      setMessage("사용자 삭제 실패");
     }
-};
+  };
 
   const handleCancel = () => {
     navigate("/MyInfo_mgr");
@@ -108,22 +110,22 @@ function User() {
             </tr>
           </thead>
           <tbody>
-          {managedUsers.length > 0 ? (
-  managedUsers.map((user, index) => (
-    <tr key={index}>
-      <td>{user.USER_NAME}</td>
-      <td>{user.USER_BIRTHDATE}</td>
-      <td>{user.JOINED_AT}</td>
-      <td>
-        <button onClick={() => handleDeleteUser(user.USER_EMAIL)}>삭제</button>
-      </td>
-    </tr>
-  ))
-) : (
-  <tr>
-    <td colSpan="4">등록된 사용자가 없습니다.</td>
-  </tr>
-)}
+            {managedUsers.length > 0 ? (
+              managedUsers.map((user, index) => (
+                <tr key={index}>
+                  <td>{user.USER_NAME}</td>
+                  <td>{user.USER_BIRTHDATE}</td>
+                  <td>{user.JOINED_AT}</td>
+                  <td>
+                    <button onClick={() => handleDeleteUser(user.USER_EMAIL)}>삭제</button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4">등록된 사용자가 없습니다.</td>
+              </tr>
+            )}
           </tbody>
         </table>
         <div className="profile-actions">
