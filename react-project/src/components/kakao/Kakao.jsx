@@ -3,6 +3,7 @@ import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import axios from "../../axios";
 
+
 const { kakao } = window;
 
 const Kakao = () => {
@@ -40,8 +41,7 @@ const Kakao = () => {
   return (
     <div>
       <Header />
-      <div id="map" style={{ width: "400px", height: "500px" }}></div>
-
+      <div id="map" className="map-container"></div>
       <div className="footer">
         <Footer />
       </div>

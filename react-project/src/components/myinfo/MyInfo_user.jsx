@@ -1,29 +1,44 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
+import axios from "../../axios";
 
 const MyInfo_user = () => {
   const navigate = useNavigate();
 
   const handleProfileEdit = () => {
-    navigate('/MyInfo_user_ProfileEdit');
+    navigate("/MyInfo_user_ProfileEdit");
   };
 
   const handlePWEdit = () => {
-    navigate('/MyInfo_user_PWEdit');
-  };
-  
-  const handleDevice = () => {
-    navigate('/MyInfo_user_Device');
-  };
-  
-  const handleFeedback = () => {
-    navigate('/MyInfo_user_Feedback');
+    navigate("/MyInfo_user_PWEdit");
   };
 
-  const handleResign = () => {
-    navigate('/MyInfo_user_Resign');
+  const handleDevice = () => {
+    navigate("/MyInfo_user_Device");
+  };
+
+  const handleFeedback = () => {
+    navigate("/MyInfo_user_Feedback");
+  };
+
+  const handleResign = async () => {
+    try {
+      const email = sessionStorage.getItem("email");
+      const response = await axios.post("/resign", { email });
+
+      if (response.data.success) {
+        sessionStorage.removeItem("email");
+        alert("회원 탈퇴가 성공적으로 처리되었습니다.");
+        navigate("/");
+      } else {
+        alert("회원 탈퇴에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Error resigning:", error);
+      alert("회원 탈퇴 중 오류가 발생했습니다.");
+    }
   };
 
   const handleLogout = () => {
@@ -37,7 +52,7 @@ const MyInfo_user = () => {
   };
 
   return (
-    <div className='myinfo-container'>
+    <div className="myinfo-container">
       <Header />
         <div className='myinfo-body'>
           <p>기본정보</p>
@@ -59,6 +74,6 @@ const MyInfo_user = () => {
       </div>
     </div>
   );
-}
+};
 
 export default MyInfo_user;

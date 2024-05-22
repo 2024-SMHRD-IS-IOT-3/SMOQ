@@ -4,8 +4,9 @@ const db = require('../config/db');
 const oracledb = require('oracledb')
 const path = require('path')
 const { sendEmail } = require('../config/email');
-const bcrypt = require('bcrypt');
 
+
+ const addr = "";
 // 메인 경로
 router.get('/', (req, res) => {
     console.log('누군가 메인페이지에 접근했습니다!');
@@ -214,7 +215,8 @@ router.post('/login', async (req, res) => {
 
         if (result.rows.length > 0) {
             const user = result.rows[0];
-            req.session.email = email; // 세션에 이메일 저장
+            req.session.email = email;
+            req.session.joined_at = joi
             res.json({ 
                 success: true, 
                 message: '로그인 성공', 
@@ -417,16 +419,16 @@ router.post('/get-smoking-data', async (req, res) => {
   router.post('/queryDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
-    const user = req.body;
-    const { startDate, endDate } = req.body;
-    console.log('startDate', startDate, 'endDate', endDate, 'user', user);
+    const { email, startDate, endDate } = req.body;
+    console.log('startDate', startDate, 'endDate', endDate, 'user', email);
+
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT TO_CHAR(smoke_time,'MM/DD HH24:MI') AS SMOKE_TIME, smoke_loc AS SMOKE_LOC
         FROM tb_smoking_sensor
-        WHERE user_email ='${user}'
+        WHERE user_email ='${email}'
         AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD') AND TO_DATE('${endDate}', 'YY/MM/DD') + 1
         `;
 
@@ -452,55 +454,74 @@ router.post('/get-smoking-data', async (req, res) => {
 /** 캘린더 날짜로 조회 */
 router.post('/handledate', async (req, res) => {
     console.log('최근 흡연 시간을 조회합니다.');
+    
+    const { date, email } = req.body;
+    console.log('date', date, 'user', email);
 
-    const { user, date } = req.body;
-    console.log('date', date, 'user',user);
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT TO_CHAR(smoke_time, 'MM/DD HH24:MI'), smoke_loc
         FROM tb_smoking_sensor
-        WHERE user_email = '${user}'
+        WHERE user_email = '${email}'
         AND TO_CHAR(smoke_time,'YY/MM/DD') LIKE '${date}'
         `;
 
         console.log("Executing SQL:", sql);
 
         oracledb.fetchAsString = [oracledb.DATE];
-        connection.execute(sql, function(err,result){
-            if(err){
-                console.log(err.message)
-            }else {
-                console.log('success', result.rows)
-                res.json({result : result.rows})
-                // res.send(result.rows);
+        connection.execute(sql, function(err, result) {
+            if (err) {
+                console.log(err.message);
+                res.status(500).json({ error: 'Error executing query' });
+            } else {
+                if (result.rows.length > 0) {
+                    console.log('success', result.rows);
+                    // 위도, 경도 각각 다른 변수 저장
+                    let loca = result.rows[0][1].split(',');
+                    let lat = loca[0];
+                    let len = loca[1];
+                    console.log(loca);
+
+                    // 객체데이터 생성
+                    // result.rows[0][0], formatted_address
+                    res.json({ result: result.rows });
+                } else {
+                    console.log('No results found');
+                    res.json({ result: 'No results found' });
+                }
             }
-        })
+        });
 
         await connection.close();
 
-        
     } catch (err) {
         console.error('Error executing query:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
+
+
+
+
+
 /** 날짜 범위 조회하기(그래프) */
 router.post('/graphDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
-    const { user, startDate, endDate } = req.body;
-    console.log('startDate', startDate, 'endDate', endDate, 'user', user);
+    const { email, startDate, endDate } = req.body;
+    console.log('startDate', startDate, 'endDate', endDate, 'user', email);
+
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT TO_CHAR(smoke_time, 'YY/MM/DD') AS SMOKE_DATE, COUNT(*) AS SMOKE_COUNT
         FROM tb_smoking_sensor
-        WHERE user_email ='${user}'
-        AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD') AND TO_DATE('${endDate}', 'YY/MM/DD')+1
+        WHERE user_email ='${email}'
+        AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD HH24:MI:SS') AND TO_DATE('${endDate}', 'YY/MM/DD HH24:MI:SS') + 1
         GROUP BY TO_CHAR(smoke_time, 'YY/MM/DD')
         ORDER BY TO_CHAR(smoke_time, 'YY/MM/DD')
         `;
@@ -508,14 +529,14 @@ router.post('/graphDateRange', async (req, res) => {
         console.log("Executing SQL:", sql);
         oracledb.fetchAsString = [oracledb.DATE];
 
-        connection.execute(sql, function(err,result){
-            if(err){
-                console.log(err.message)
-            }else {
-                console.log('success', result.rows)
-                res.json({result : result.rows})
+        connection.execute(sql, function(err, result) {
+            if (err) {
+                console.log(err.message);
+            } else {
+                console.log('success', result.rows);
+                res.json({ result: result.rows });
             }
-        })
+        });
 
         await connection.close();
     } catch (err) {
@@ -609,14 +630,15 @@ router.post('/update-like', async (req, res) => {
 /** 카카오 지도 */
 router.post('/handlemap', async(req, res)=> {
     console.log('지도를 표시합니다');
-    const user = req.body;
+    const {email} = req.body;
+    console.log('gd',email);
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT smoke_loc
         FROM tb_smoking_sensor
-        WHERE user_email = '${user}'
+        WHERE user_email = '${email}'
         `;
 
         console.log("Executing SQL:", sql);
@@ -849,7 +871,6 @@ router.post('/sendFeedback', async (req, res) => {
     }
 });
 
-
 /** 비밀번호 변경 */
 router.post('/changePassword', async (req, res) => {
     const { email, currentPassword, newPassword } = req.body;
@@ -902,5 +923,66 @@ router.post('/changePassword', async (req, res) => {
     } 
 
 });
+
+/** 회원탈퇴 */
+router.post('/resign', async (req, res) => {
+    const { email } = req.body;
+    let connection;
+
+    console.log(email)
+
+    try {
+      connection = await db.connectToOracle();
+  
+      await connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
+  
+      await connection.execute(
+        'DELETE FROM TB_SMOKING_SENSOR WHERE USER_EMAIL = :email',
+        { email }
+      );
+
+      const result = await connection.execute(
+        'SELECT WRITING_USER FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
+        { email }
+      );
+  
+      if (result.rows.length === 0) {
+        return res.status(400).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+      }
+  
+      const writingUser = result.rows[0][0];
+      await connection.execute(
+        'DELETE FROM TB_COMMENT WHERE WRITING_USER = :writingUser',
+        { writingUser }
+      );
+      await connection.execute(
+        'DELETE FROM TB_POST WHERE WRITING_USER = :writingUser',
+        { writingUser }
+      );
+      await connection.execute(
+        'DELETE FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
+        {  email }
+      );
+      await connection.execute(
+        'DELETE FROM TB_USER WHERE USER_EMAIL = :email',
+        {  email }
+      );
+  
+      await connection.commit();
+  
+      res.status(200).json({ success: true, message: '회원 탈퇴가 성공적으로 처리되었습니다.' });
+    } catch (error) {
+      if (connection) {
+        try {
+          await connection.rollback();
+        } catch (err) {
+          console.error('Failed to rollback transaction:', err);
+        }
+      }
+      console.error('회원 탈퇴 실패:', error);
+      res.status(500).json({ success: false, message: '회원 탈퇴 실패' });
+    } 
+  });
+  
 
 module.exports = router;

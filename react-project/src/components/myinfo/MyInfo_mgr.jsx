@@ -1,29 +1,21 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "../header/Header";
+import Footermgr from "../footer/Footer_mgr";
 
 const MyInfo_user = () => {
   const navigate = useNavigate();
 
   const handleProfileEdit = () => {
-    navigate('/MyInfo_user_ProfileEdit');
+    navigate("/MyInfo_user_ProfileEdit");
   };
 
   const handlePWEdit = () => {
-    navigate('/MyInfo_user_PWEdit');
-  };
-  
-  const handleDevice = () => {
-    navigate('/MyInfo_user_Device');
-  };
-  
-  const handleFeedback = () => {
-    navigate('/MyInfo_user_Feedback');
+    navigate("/MyInfo_user_PWEdit");
   };
 
-  const handleResign = () => {
-    navigate('/MyInfo_user_Resign');
+  const handleDevice = () => {
+    navigate("/MyInfo_user_Device");
   };
 
   const handleLogout = () => {
@@ -36,8 +28,15 @@ const MyInfo_user = () => {
     }
   };
 
+
+  const handleFeedback = () => {
+    navigate("/MyInfo_user_Feedback");
+  };
+
+  const handleResign = () => {};
+
   return (
-    <div className='myinfo-container'>
+    <div className="myinfo-container">
       <Header />
         <div className='myinfo-body'>
           <p>기본정보</p>
@@ -59,6 +58,6 @@ const MyInfo_user = () => {
       </div>
     </div>
   );
-}
+};
 
-export default MyInfo_user;
+export default MyInfo_mgr;
