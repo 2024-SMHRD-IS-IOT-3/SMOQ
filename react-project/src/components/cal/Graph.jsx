@@ -35,26 +35,21 @@ ChartJS.register(
 );
 
 const Graph = () => {
-  const [startDate, setStartDate] = useState(new Date("2024/05/17"));
-  const [endDate, setEndDate] = useState(new Date("2024/05/19"));
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
   const [data, setData] = useState([]);
-
+  const [joinedAt, setJoinedAt] = useState(null);
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchJoinedAt = async () => {
-  //     try {
-  //       const response = await axios.post('/get-joined-at');
-  //       const joinedAt = response.data.joinedAt;
-  //       sessionStorage.setItem('joinedAt', joinedAt);
-  //       setJoinedAt(new Date(joinedAt));
-  //     } catch (error) {
-  //       console.error('Failed to fetch joined_at:', error);
-  //     }
-  //   };
-
-  //   fetchJoinedAt();
-  // }, []);
+  useEffect(() => {
+    const joinedAtString = sessionStorage.getItem('joined_at');
+    if (joinedAtString) {
+      const joinedAtDate = new Date(joinedAtString);
+      setJoinedAt(joinedAtDate);
+      setStartDate(joinedAtDate);
+      setEndDate(new Date(joinedAtDate.getTime() + 7 * 24 * 60 * 60 * 1000)); // 가입일로부터 일주일 후를 기본값으로 설정
+    }
+  }, []);
 
   const formatDate = (date) => {
     const year = String(date.getFullYear()).slice(2);
@@ -64,10 +59,15 @@ const Graph = () => {
   };
 
   const handleStartDateChange = (date) => {
+    if (joinedAt && date < joinedAt) {
+      alert('가입 날짜보다 빠른 날짜는 선택할 수 없습니다.');
+      return;
+    }
+
     const oneMonthAfterStart = new Date(date);
     oneMonthAfterStart.setMonth(oneMonthAfterStart.getMonth() + 1);
 
-    if (endDate > oneMonthAfterStart) {
+    if (endDate && endDate > oneMonthAfterStart) {
         alert('기간은 최대 한 달까지 설정할 수 있습니다. 종료 날짜를 조정해주세요.');
     } else {
         setStartDate(date);
@@ -78,7 +78,12 @@ const Graph = () => {
     const oneMonthBeforeEnd = new Date(date);
     oneMonthBeforeEnd.setMonth(oneMonthBeforeEnd.getMonth() - 1);
 
-    if (startDate < oneMonthBeforeEnd) {
+    if (joinedAt && date < joinedAt) {
+      alert('가입 날짜보다 빠른 날짜는 선택할 수 없습니다.');
+      return;
+    }
+
+    if (startDate && startDate < oneMonthBeforeEnd) {
         alert('기간은 최대 한 달까지 설정할 수 있습니다. 시작 날짜를 조정해주세요.');
     } else {
         setEndDate(date);
@@ -89,10 +94,12 @@ const Graph = () => {
     try {
         const formattedStartDate = formatDate(startDate);
         const formattedEndDate = formatDate(endDate);
+        const email = sessionStorage.getItem('email'); // 세션 스토리지에서 이메일 가져오기
 
-        console.log('handleSearch Function', formattedStartDate, formattedEndDate); // 요청 전에 확인
+        console.log('handleSearch Function', formattedStartDate, formattedEndDate, 'email', email); // 요청 전에 확인
 
         const response = await axios.post('/graphDateRange', {
+            email: email,
             startDate: formattedStartDate,
             endDate: formattedEndDate
         });
@@ -161,6 +168,7 @@ const Graph = () => {
             selectsStart
             startDate={startDate}
             endDate={endDate}
+            minDate={joinedAt} // 가입 날짜부터 선택 가능하도록 설정
           />
         </div>
         <div className="datepicker-container">
@@ -172,7 +180,7 @@ const Graph = () => {
             selectsEnd
             startDate={startDate}
             endDate={endDate}
-            minDate={startDate}
+            minDate={joinedAt} // 시작 날짜부터 선택 가능하도록 설정
           />
         </div>
         </div>
