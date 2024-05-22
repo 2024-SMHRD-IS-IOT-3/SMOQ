@@ -23,12 +23,12 @@ const Detail = () => {
         }
     }, []);
 
-    const formatDate = (date) => {
-        const year = String(date.getFullYear()).slice(2);
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
-        return `${year}/${month}/${day}`;
-    };
+  const formatDate = (date) => {
+    const year = String(date.getFullYear()).slice(2);
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}/${month}/${day}`;
+  };
 
     const handleStartDateChange = (date) => {
         if (joinedAt && date < joinedAt) {
@@ -46,9 +46,9 @@ const Detail = () => {
         }
     };
 
-    const handleEndDateChange = (date) => {
-        const oneMonthBeforeEnd = new Date(date);
-        oneMonthBeforeEnd.setMonth(oneMonthBeforeEnd.getMonth() - 1);
+  const handleEndDateChange = (date) => {
+    const oneMonthBeforeEnd = new Date(date);
+    oneMonthBeforeEnd.setMonth(oneMonthBeforeEnd.getMonth() - 1);
 
         if (joinedAt && date < joinedAt) {
             alert('가입 날짜보다 빠른 날짜는 선택할 수 없습니다.');
@@ -140,8 +140,8 @@ const Detail = () => {
             <div className='footer'>
                 <Menu />
             </div>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default Detail;

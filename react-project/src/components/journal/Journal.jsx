@@ -1,26 +1,28 @@
-import React, { useEffect, useState } from 'react';
-import Header from '../header/Header';
-import Footer from '../footer/Footer';
-import JournalItem from './JournalItem';
-import './journal.css';
+import React, { useEffect, useState } from "react";
+import Header from "../header/Header";
+import Footer from "../footer/Footer";
+import JournalItem from "./JournalItem";
+import "./journal.css";
 import { IoSearch } from "react-icons/io5";
-import axios from '../../axios';
+import axios from "../../axios";
+import { useNavigate } from "react-router-dom";
 
 const Journal = () => {
   const [journalData, setJournalData] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchJournalData = async () => {
       try {
-        const response = await axios.get('/journallist');
-        if (response.data.success) {
-          setJournalData(response.data.data);
+        const res = await axios.get("/journallist");
+        if (res.data.success) {
+          setJournalData(res.data.data);
         } else {
-          console.error('실패');
+          console.error("실패");
         }
       } catch (error) {
-        console.error('에러:', error);
+        console.error("에러:", error);
       }
     };
 
@@ -35,27 +37,33 @@ const Journal = () => {
     item.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const writepost = () => {
+    navigate("/write");
+  };
+
   return (
-    <div className='main-container'>
+    <div className="main-container">
       <Header />
-      <div className='journal-container'>
-        <div className='div-search'>
-          <div className='searchinput-div'>
-            <div className='searchicon'>
-              <IoSearch className='login' />
+      <div className="journal-container">
+        <div className="div-search">
+          <div className="searchinput-div">
+            <div className="searchicon">
+              <IoSearch className="login" />
             </div>
-            <input 
-              type="text" 
-              placeholder="Search..." 
-              className="search-input" 
+            <input
+              type="text"
+              placeholder="Search..."
+              className="search-input"
               value={searchQuery}
               onChange={handleSearchChange}
             />
           </div>
-          <button className='btnwrite'>글쓰기</button>
-        </div>       
+          <button className="btnwrite" onClick={writepost}>
+            글쓰기
+          </button>
+        </div>
         {filteredJournalData.map((item, index) => (
-          <JournalItem 
+          <JournalItem
             key={index}
             id={item.id}
             user={item.user}
@@ -66,11 +74,11 @@ const Journal = () => {
           />
         ))}
       </div>
-      <div className='footer'>
-        <Footer/>
+      <div className="footer">
+        <Footer />
       </div>
     </div>
   );
-}
+};
 
 export default Journal;

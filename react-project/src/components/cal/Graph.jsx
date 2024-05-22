@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Header from '../header/Header';
-import Menu from '../footer/Footer';
-import { Routes, Route, Link } from 'react-router-dom';
-import Cal_Detail from './Cal_Detail';
-import Cal_main from './Cal_main';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "../header/Header";
+import Menu from "../footer/Footer";
+import { Routes, Route, Link } from "react-router-dom";
+import Cal_Detail from "./Cal_Detail";
+import Cal_main from "./Cal_main";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,8 +19,8 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import axios from '../../axios';
+import ChartDataLabels from "chartjs-plugin-datalabels";
+import axios from "../../axios";
 
 ChartJS.register(
   CategoryScale,
@@ -53,8 +53,8 @@ const Graph = () => {
 
   const formatDate = (date) => {
     const year = String(date.getFullYear()).slice(2);
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}/${month}/${day}`;
   };
 
@@ -70,14 +70,13 @@ const Graph = () => {
     if (endDate && endDate > oneMonthAfterStart) {
         alert('기간은 최대 한 달까지 설정할 수 있습니다. 종료 날짜를 조정해주세요.');
     } else {
-        setStartDate(date);
+      setStartDate(date);
     }
   };
 
   const handleEndDateChange = (date) => {
     const oneMonthBeforeEnd = new Date(date);
     oneMonthBeforeEnd.setMonth(oneMonthBeforeEnd.getMonth() - 1);
-
     if (joinedAt && date < joinedAt) {
       alert('가입 날짜보다 빠른 날짜는 선택할 수 없습니다.');
       return;
@@ -86,7 +85,7 @@ const Graph = () => {
     if (startDate && startDate < oneMonthBeforeEnd) {
         alert('기간은 최대 한 달까지 설정할 수 있습니다. 시작 날짜를 조정해주세요.');
     } else {
-        setEndDate(date);
+      setEndDate(date);
     }
   };
 
@@ -107,22 +106,22 @@ const Graph = () => {
         console.log(response.data.result);
         setData(response.data.result);
     } catch (error) {
-        console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     }
   };
 
   const chartData = {
-    labels: data.map((item) => item[0]),  // 날짜 레이블
+    labels: data.map((item) => item[0]), // 날짜 레이블
     datasets: [
       {
         yAxisID: "y1",
         type: "bar",
         label: "담배 피운 횟수",
-        data: data.map((item) => item[1]),  // 담배 피운 횟수 데이터
+        data: data.map((item) => item[1]), // 담배 피운 횟수 데이터
         backgroundColor: "rgba(255, 99, 132, 0.5)",
         borderColor: "rgba(255, 99, 132, 1)",
         borderWidth: 1,
-      }
+      },
     ],
   };
 
@@ -135,7 +134,7 @@ const Graph = () => {
     },
     plugins: {
       legend: {
-            display: true,
+        display: true,
       },
       datalabels: {
         formatter: (value) => value,
@@ -147,16 +146,20 @@ const Graph = () => {
   };
 
   const handleCalendarClick = () => {
-    navigate('/Cal_main');
+    navigate("/Cal_main");
   };
 
   return (
     <div className="main-container">
       <Header />
       <div className="controls">
-        <div className='cal-text'>
-          <button id='calbtn' onClick={handleCalendarClick}>캘린더</button>
-          <Link to='/Cal_Detail' id='lk'>자세히보기{'>'}</Link>
+        <div className="cal-text">
+          <button id="calbtn" onClick={handleCalendarClick}>
+            캘린더
+          </button>
+          <Link to="/Cal_Detail" id="lk">
+            자세히보기{">"}
+          </Link>
         </div>
         <div className='date-picker'>
         <div className="datepicker-container">
@@ -186,17 +189,19 @@ const Graph = () => {
         </div>
         <button onClick={handleSearch} className='checkbtn'>조회하기</button>
       </div>
-      
+
       <Routes>
-        <Route path='/Cal_Detail' element={<Cal_Detail />} />
-        <Route path='/Cal_Main' element={<Cal_main />} />
+        <Route path="/Cal_Detail" element={<Cal_Detail />} />
+        <Route path="/Cal_Main" element={<Cal_main />} />
       </Routes>
       <div className="graph-container">
         <div className="graph">
           <Bar data={chartData} options={options} plugins={[ChartDataLabels]} />
         </div>
       </div>
-      <div className='footer'><Menu /></div>
+      <div className="footer">
+        <Menu />
+      </div>
     </div>
   );
 };
