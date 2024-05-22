@@ -96,10 +96,10 @@ const Cal_main = () => {
       <div className="cal-container">
         <div className="cal-text">
           <button id="calbtn" onClick={handleGraphClick}>
-            그래프
+            그래프로 보기 {">"}
           </button>
           <Link to="/Cal_Detail" id="lk">
-            자세히보기{">"}
+            자세히보기 {">"}
           </Link>
         </div>      
         <div className='cal'>
@@ -109,7 +109,7 @@ const Cal_main = () => {
           <div>
             {selectedDate.getFullYear()}년 {selectedDate.getMonth() + 1}월 {selectedDate.getDate()}일
           </div>
-          <hr />
+          <hr className="hr2"/>
           <Cal_table data={parseData} />
 
         </div>
