@@ -216,7 +216,6 @@ router.post('/login', async (req, res) => {
         if (result.rows.length > 0) {
             const user = result.rows[0];
             req.session.email = email;
-            req.session.joined_at = joi
             res.json({ 
                 success: true, 
                 message: '로그인 성공', 

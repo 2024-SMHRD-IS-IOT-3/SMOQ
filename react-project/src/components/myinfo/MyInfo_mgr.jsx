@@ -2,20 +2,43 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 import Footermgr from "../footer/Footer_mgr";
+import axios from "../../axios";
 
-const MyInfo_user = () => {
+const MyInfo_mgr = () => {
   const navigate = useNavigate();
 
   const handleProfileEdit = () => {
-    navigate("/MyInfo_user_ProfileEdit");
+    navigate("/MyInfo_mgr_ProfileEdit");
   };
 
   const handlePWEdit = () => {
-    navigate("/MyInfo_user_PWEdit");
+    navigate("/MyInfo_mgr_PWEdit");
   };
 
   const handleDevice = () => {
-    navigate("/MyInfo_user_Device");
+    navigate("/MyInfo_mgr_user");
+  };
+
+  const handleFeedback = () => {
+    navigate("/MyInfo_mgr_Feedback");
+  };
+
+  const handleResign = async () => {
+    try {
+      const email = sessionStorage.getItem("email");
+      const response = await axios.post("/resign", { email });
+
+      if (response.data.success) {
+        sessionStorage.removeItem("email");
+        alert("회원 탈퇴가 성공적으로 처리되었습니다.");
+        navigate("/");
+      } else {
+        alert("회원 탈퇴에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Error resigning:", error);
+      alert("회원 탈퇴 중 오류가 발생했습니다.");
+    }
   };
 
   const handleLogout = () => {
@@ -27,13 +50,6 @@ const MyInfo_user = () => {
       navigate('/');
     }
   };
-
-
-  const handleFeedback = () => {
-    navigate("/MyInfo_user_Feedback");
-  };
-
-  const handleResign = () => {};
 
   return (
     <div className="myinfo-container">
@@ -54,7 +70,7 @@ const MyInfo_user = () => {
           <button className='profile-button' onClick={handleResign}>회원 탈퇴</button>
         </div>
       <div className='footer'>
-        <Footer />
+        <Footermgr />
       </div>
     </div>
   );

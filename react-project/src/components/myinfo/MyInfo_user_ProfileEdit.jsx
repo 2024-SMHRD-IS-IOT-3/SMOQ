@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from '../../axios';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
+import { useNavigate } from "react-router-dom";
 
 const ProfileEdit = () => {
   const [profile, setProfile] = useState({
@@ -11,6 +12,8 @@ const ProfileEdit = () => {
     email: '',
     birthday: ''
   });
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -43,6 +46,10 @@ const ProfileEdit = () => {
       ...prevState,
       [name]: value
     }));
+  };
+
+  const handleCancel = () => {
+    navigate("/MyInfo_user");
   };
 
   const handleSubmit = async (event) => {
@@ -93,7 +100,9 @@ const ProfileEdit = () => {
           <input type='date' id='birthday' name='birthday' value={profile.birthday} disabled />
         </div>
         <div className='profile-actions'>
-          <button type='button' onClick={() => {}}>취소</button>
+          <button type="button" onClick={handleCancel}>
+            취소
+          </button>
           <button type='submit'>변경</button>
         </div>
       </form>

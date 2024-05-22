@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../header/Header';
-import Footer from '../footer/Footer';
+import Footermgr from '../footer/Footer_mgr';
 import { useNavigate } from "react-router-dom";
 
 const Device = () => {
@@ -24,7 +24,7 @@ const Device = () => {
         <div className='myinfo-container'>
             <Header />
             <div className='myinfo-header'>
-                <h2>등록 기기 관리</h2>
+                <h2>등록 사용자 관리</h2>
             </div>
             <div className="device-content">
                 <div className="search-section">
@@ -32,15 +32,15 @@ const Device = () => {
                         type="text"
                         value={searchTerm}
                         onChange={handleSearchChange}
-                        placeholder="장치 입력"
+                        placeholder="이메일 입력"
                     />
                     <button>등록</button>
                 </div>
                 <table>
                     <thead>
                         <tr>
-                            <th>장치번호</th>
-                            <th>장치명</th>
+                            <th>이름</th>
+                            <th>생년월일</th>
                             <th>등록일자</th>
                             <th>등록해제</th>
                         </tr>
@@ -64,7 +64,7 @@ const Device = () => {
                 </div>
             </div>
             <div className='footer'>
-                <Footer />
+                <Footermgr />
             </div>
         </div>
     );

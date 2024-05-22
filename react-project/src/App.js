@@ -27,6 +27,11 @@ import MyInfo_user_ProfileEdit from './components/myinfo/MyInfo_user_ProfileEdit
 import MyInfo_user_PWEdit from './components/myinfo/MyInfo_user_PWEdit';
 import MyInfo_user_Device from './components/myinfo/MyInfo_user_Device';
 import MyInfo_user_Feedback from './components/myinfo/MyInfo_user_Feedback';
+import MyInfo_mgr from './components/myinfo/MyInfo_mgr';
+import MyInfo_mgr_ProfileEdit from './components/myinfo/MyInfo_mgr_ProfileEdit';
+import MyInfo_mgr_PWEdit from './components/myinfo/MyInfo_mgr_PWEdit';
+import MyInfo_mgr_user from './components/myinfo/MyInfo_mgr_user';
+import MyInfo_mgr_Feedback from './components/myinfo/MyInfo_mgr_Feedback';
 
 function App() {
   return (
@@ -68,12 +73,19 @@ function App() {
         <Route path='/write' element={<Write />} />
         <Route path='/journal_comment' element={<Journalcomment />} />
 
-        {/* 내정보 */}
+        {/* 내정보-유저 */}
         <Route path='/MyInfo_user' element={<MyInfo_user/>} />
         <Route path='/MyInfo_user_ProfileEdit' element={<MyInfo_user_ProfileEdit/>} />
         <Route path='/MyInfo_user_PWEdit' element={<MyInfo_user_PWEdit/>} />
         <Route path='/MyInfo_user_Device' element={<MyInfo_user_Device/>} />
         <Route path='/MyInfo_user_Feedback' element={<MyInfo_user_Feedback/>} />
+
+        {/* 내정보-관리자 */}
+        <Route path='/MyInfo_user' element={<MyInfo_mgr/>} />
+        <Route path='/MyInfo_user_ProfileEdit' element={<MyInfo_mgr_ProfileEdit/>} />
+        <Route path='/MyInfo_user_PWEdit' element={<MyInfo_mgr_PWEdit/>} />
+        <Route path='/MyInfo_user_Device' element={<MyInfo_mgr_user/>} />
+        <Route path='/MyInfo_user_Feedback' element={<MyInfo_mgr_Feedback/>} />
       </Routes>
     </div>
   );

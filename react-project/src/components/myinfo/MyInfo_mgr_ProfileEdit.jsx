@@ -1,15 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from '../../axios';
 import Header from '../header/Header';
-import Footer from '../footer/Footer';
+import Footermgr from '../footer/Footer_mgr';
+import { useNavigate } from "react-router-dom";
 
 const ProfileEdit = () => {
   const [profile, setProfile] = useState({
     profilePicture: '/path/to/default_profile.jpg',
-    nickname: '홍길동',
-    name: '홍길동',
-    email: 'user@example.com',
-    birthday: '1990-01-01'
+    nickname: '',
+    name: '',
+    email: '',
+    birthday: ''
   });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const email = sessionStorage.getItem("email");
+      try {    
+        const response = await axios.post('/user-profile', { email });
+        const userData = response.data.userProfile;
+    
+        // Format the date from "20-DEC-97" to "1997-12-20"
+        const formattedBirthday = new Date(userData.USER_BIRTHDATE).toISOString().split('T')[0];
+    
+        setProfile({
+          profilePicture: userData.profilePicture || '/path/to/default_profile.jpg',
+          nickname: userData.USER_NICK || '',
+          name: userData.USER_NAME || '',
+          email: userData.USER_EMAIL || '',
+          birthday: formattedBirthday
+        });
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,9 +48,23 @@ const ProfileEdit = () => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleCancel = () => {
+    navigate("/MyInfo_mgr");
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(profile);
+    
+    try {
+      const res = await axios.post('/update-profile', {
+        email: profile.email,
+        newNickname: profile.nickname
+      });
+
+      console.log(res.data); // 서버 응답 로그
+    } catch (error) {
+      console.error('Profile update failed:', error);
+    }
   };
 
   return (
@@ -53,16 +96,18 @@ const ProfileEdit = () => {
           <input type='text' id='name' name='name' value={profile.name} disabled />
         </div>
         <div className='form-group'>
-          <label htmlFor='birthday'>소속기관</label>
-          <input type='text' id='birthday' name='birthday' value={profile.birthday} disabled />
+          <label htmlFor='birthday'>생년월일</label>
+          <input type='date' id='birthday' name='birthday' value={profile.birthday} disabled />
         </div>
         <div className='profile-actions'>
-          <button type='button' onClick={() => {}}>취소</button>
+          <button type="button" onClick={handleCancel}>
+            취소
+          </button>
           <button type='submit'>변경</button>
         </div>
       </form>
       <div className='footer'>
-        <Footer />
+        <Footermgr />
       </div>
     </div>
   );
