@@ -44,35 +44,35 @@ const MyInfo_user = () => {
     }
   };
 
+  const handleLogout = () => {
+    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
+    if (confirmLogout) {
+      // Clear sessionStorage
+      sessionStorage.clear();
+      // Navigate to the '/' page
+      navigate('/');
+    }
+  };
+
   return (
     <div className="myinfo-container">
       <Header />
-      <div className="myinfo-body">
-        <p>기본정보</p>
-        <button className="profile-button" onClick={handleProfileEdit}>
-          프로필 변경
-        </button>
-        <button className="profile-button" onClick={handlePWEdit}>
-          비밀번호 변경
-        </button>
-        <button className="profile-button" onClick={handleDevice}>
-          등록 기기관리
-        </button>
-      </div>
-      <div className="myinfo-body">
-        <p>고객센터</p>
-        <button className="profile-button" onClick={handleFeedback}>
-          문의하기
-        </button>
-      </div>
-      <div className="myinfo-body">
-        <p>계정관리</p>
-        <button className="profile-button">로그아웃</button>
-        <button className="profile-button" onClick={handleResign}>
-          회원 탈퇴
-        </button>
-      </div>
-      <div className="footer">
+        <div className='myinfo-body'>
+          <p>기본정보</p>
+          <button className='profile-button' onClick={handleProfileEdit}>프로필 변경</button>
+          <button className='profile-button' onClick={handlePWEdit}>비밀번호 변경</button>
+          <button className='profile-button' onClick={handleDevice}>등록 기기관리</button>
+        </div>
+        <div className='myinfo-body'>
+          <p>고객센터</p>
+          <button className='profile-button' onClick={handleFeedback}>문의하기</button>
+        </div>
+        <div className='myinfo-body'>
+          <p>계정관리</p>
+          <button className='profile-button' onClick={handleLogout}>로그아웃</button>
+          <button className='profile-button' onClick={handleResign}>회원 탈퇴</button>
+        </div>
+      <div className='footer'>
         <Footer />
       </div>
     </div>

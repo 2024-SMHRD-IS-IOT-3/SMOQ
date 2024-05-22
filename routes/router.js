@@ -4,8 +4,9 @@ const db = require('../config/db');
 const oracledb = require('oracledb')
 const path = require('path')
 const { sendEmail } = require('../config/email');
-const bcrypt = require('bcrypt');
 
+
+ const addr = "";
 // 메인 경로
 router.get('/', (req, res) => {
     console.log('누군가 메인페이지에 접근했습니다!');
@@ -417,16 +418,16 @@ router.post('/get-smoking-data', async (req, res) => {
   router.post('/queryDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
-    const user = req.body;
-    const { startDate, endDate } = req.body;
-    console.log('startDate', startDate, 'endDate', endDate, 'user', user);
+    const { email, startDate, endDate } = req.body;
+    console.log('startDate', startDate, 'endDate', endDate, 'user', email);
+
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT TO_CHAR(smoke_time,'MM/DD HH24:MI') AS SMOKE_TIME, smoke_loc AS SMOKE_LOC
         FROM tb_smoking_sensor
-        WHERE user_email ='${user}'
+        WHERE user_email ='${email}'
         AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD') AND TO_DATE('${endDate}', 'YY/MM/DD') + 1
         `;
 
@@ -452,55 +453,74 @@ router.post('/get-smoking-data', async (req, res) => {
 /** 캘린더 날짜로 조회 */
 router.post('/handledate', async (req, res) => {
     console.log('최근 흡연 시간을 조회합니다.');
+    
+    const { date, email } = req.body;
+    console.log('date', date, 'user', email);
 
-    const { user, date } = req.body;
-    console.log('date', date, 'user',user);
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT TO_CHAR(smoke_time, 'MM/DD HH24:MI'), smoke_loc
         FROM tb_smoking_sensor
-        WHERE user_email = '${user}'
+        WHERE user_email = '${email}'
         AND TO_CHAR(smoke_time,'YY/MM/DD') LIKE '${date}'
         `;
 
         console.log("Executing SQL:", sql);
 
         oracledb.fetchAsString = [oracledb.DATE];
-        connection.execute(sql, function(err,result){
-            if(err){
-                console.log(err.message)
-            }else {
-                console.log('success', result.rows)
-                res.json({result : result.rows})
-                // res.send(result.rows);
+        connection.execute(sql, function(err, result) {
+            if (err) {
+                console.log(err.message);
+                res.status(500).json({ error: 'Error executing query' });
+            } else {
+                if (result.rows.length > 0) {
+                    console.log('success', result.rows);
+                    // 위도, 경도 각각 다른 변수 저장
+                    let loca = result.rows[0][1].split(',');
+                    let lat = loca[0];
+                    let len = loca[1];
+                    console.log(loca);
+
+                    // 객체데이터 생성
+                    // result.rows[0][0], formatted_address
+                    res.json({ result: result.rows });
+                } else {
+                    console.log('No results found');
+                    res.json({ result: 'No results found' });
+                }
             }
-        })
+        });
 
         await connection.close();
 
-        
     } catch (err) {
         console.error('Error executing query:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
+
+
+
+
+
 /** 날짜 범위 조회하기(그래프) */
 router.post('/graphDateRange', async (req, res) => {
     console.log('기간 내 데이터를 조회합니다.');
 
-    const { user, startDate, endDate } = req.body;
-    console.log('startDate', startDate, 'endDate', endDate, 'user', user);
+    const { email, startDate, endDate } = req.body;
+    console.log('startDate', startDate, 'endDate', endDate, 'user', email);
+
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT TO_CHAR(smoke_time, 'YY/MM/DD') AS SMOKE_DATE, COUNT(*) AS SMOKE_COUNT
         FROM tb_smoking_sensor
-        WHERE user_email ='${user}'
-        AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD') AND TO_DATE('${endDate}', 'YY/MM/DD')+1
+        WHERE user_email ='${email}'
+        AND smoke_time BETWEEN TO_DATE('${startDate}', 'YY/MM/DD HH24:MI:SS') AND TO_DATE('${endDate}', 'YY/MM/DD HH24:MI:SS') + 1
         GROUP BY TO_CHAR(smoke_time, 'YY/MM/DD')
         ORDER BY TO_CHAR(smoke_time, 'YY/MM/DD')
         `;
@@ -508,14 +528,14 @@ router.post('/graphDateRange', async (req, res) => {
         console.log("Executing SQL:", sql);
         oracledb.fetchAsString = [oracledb.DATE];
 
-        connection.execute(sql, function(err,result){
-            if(err){
-                console.log(err.message)
-            }else {
-                console.log('success', result.rows)
-                res.json({result : result.rows})
+        connection.execute(sql, function(err, result) {
+            if (err) {
+                console.log(err.message);
+            } else {
+                console.log('success', result.rows);
+                res.json({ result: result.rows });
             }
-        })
+        });
 
         await connection.close();
     } catch (err) {
@@ -609,14 +629,15 @@ router.post('/update-like', async (req, res) => {
 /** 카카오 지도 */
 router.post('/handlemap', async(req, res)=> {
     console.log('지도를 표시합니다');
-    const user = req.body;
+    const {email} = req.body;
+    console.log('gd',email);
 
     try {
         const connection = await db.connectToOracle();
         const sql = `
         SELECT smoke_loc
         FROM tb_smoking_sensor
-        WHERE user_email = '${user}'
+        WHERE user_email = '${email}'
         `;
 
         console.log("Executing SQL:", sql);
@@ -728,28 +749,111 @@ router.post('/post/:id/comment', async (req, res) => {
 });
 
 /** 게시글을 작성 */
-router.post('/writepost', async (req, res) => {
-    const { content, email } = req.body;
-
-  
+router.post('/user-profile', async (req, res) => {
+    const { email } = req.body;
+    console.log('Fetching user profile with email:', email); // Add console log for email
+    
     try {
-      const connection = await db.connectToOracle();
-      const sql = `INSERT INTO TB_POST (POST_CONTENT, CREATED_AT, WRITING_USER)
-      VALUES (
-          :content,
-          SYSDATE,
-          (SELECT writing_user FROM TB_WRITING_USER WHERE USER_EMAIL = :email)
-      )`;
-      const params = { content, email};
-  
-      await connection.execute(sql, params, { autoCommit: true });
-  
-      res.json({ success: true, message: 'Post saved successfully.' });
+        const connection = await db.connectToOracle();
+        console.log("user-profile"); // Add console log for indication
+        
+        // 사용자 정보를 가져오는 SQL 쿼리
+        const sql = `
+        SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
+        FROM TB_USER
+        WHERE USER_EMAIL = :email
+        `;
+        
+        // SQL 쿼리 실행
+        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        await connection.close();
+        console.log('User profile query result:', result.rows); // Add console log for query result
+        
+        // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
+        if (result.rows.length > 0) {
+            const userProfile = result.rows[0];
+            res.json({ success: true, userProfile });
+        } else {
+            res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
     } catch (error) {
-      console.error('Failed to save post:', error);
-      res.status(500).json({ success: false, message: 'Failed to save post', error: error.message });
-    } 
-  });
+        console.error('사용자 프로필 가져오기 실패:', error);
+        res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
+    }
+});
+
+  /** 유저 프로필 가져오기 */
+  router.post('/user-profile', async (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+    try {
+        const connection = await db.connectToOracle();
+        console.log("user-profile");
+        // 사용자 정보를 가져오는 SQL 쿼리
+        const sql = `
+        SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
+FROM TB_USER
+WHERE USER_EMAIL = :email;
+`;
+        
+        // SQL 쿼리 실행
+        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        await connection.close();
+        console.log(result.rows);
+        // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
+        if (result.rows.length > 0) {
+            const userProfile = result.rows[0];
+            res.json({ success: true, userProfile });
+        } else {
+            res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+    } catch (error) {
+        console.error('사용자 프로필 가져오기 실패:', error);
+        res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
+    }
+});
+
+/** 유저 프로필 수정 */
+router.post('/update-profile', async (req, res) => {
+    console.log("Update profile endpoint hit with data:", req.body);
+    const { email, newNickname } = req.body;
+    // Rest of your code...
+
+    try {
+        const connection = await db.connectToOracle();
+        
+        // 사용자가 존재하는지 확인
+        const userCheckSql = `SELECT * FROM TB_USER WHERE USER_EMAIL = :email`;
+        const userCheckResult = await connection.execute(userCheckSql, [email]);
+
+        if (userCheckResult.rows.length === 0) {
+            await connection.close();
+            return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 사용자 프로필 업데이트
+        const updateSql = `
+            UPDATE TB_USER 
+            SET USER_NICK = :newNickname
+            WHERE USER_EMAIL = :email
+        `;
+        const updateParams = {
+            newNickname,
+            email
+        };
+
+        await connection.execute(updateSql, updateParams, { autoCommit: true });
+
+        await connection.close();
+
+        res.json({ success: true, message: '프로필이 성공적으로 업데이트되었습니다.' });
+    } catch (error) {
+        console.error('프로필 업데이트 실패:', error);
+        res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
+    }
+});
 
 /** 문의하기 메일 발송 */
 router.post('/sendFeedback', async (req, res) => {
@@ -816,6 +920,7 @@ router.post('/changePassword', async (req, res) => {
         console.error('비밀번호 변경 실패:', error);
         res.status(500).json({ success: false, message: '비밀번호 변경 실패' });
     } 
+
 });
 
 /** 회원탈퇴 */

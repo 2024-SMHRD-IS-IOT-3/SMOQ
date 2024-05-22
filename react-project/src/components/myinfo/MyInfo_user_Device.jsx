@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import "./myinfo.css";
+import { useNavigate } from "react-router-dom";
 
 const Device = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,6 +14,11 @@ const Device = () => {
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const navigate = useNavigate();
+  const handleCancel = () => {
+    navigate("/MyInfo_user");
   };
 
   return (
@@ -53,6 +59,11 @@ const Device = () => {
             ))}
           </tbody>
         </table>
+        <div className="profile-actions">
+          <button type="button" onClick={handleCancel}>
+            취소
+          </button>
+        </div>
       </div>
       <div className="footer">
         <Footer />
