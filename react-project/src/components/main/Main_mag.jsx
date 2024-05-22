@@ -79,7 +79,7 @@ const Main_mgr = () => {
         </div>
         <div className="mgr-line"></div>
         {message && <div className="alert">{message}</div>}
-        <table className="user-table">
+        <table className="user-table1">
           <thead>
             <tr>
               <th>이름</th>
