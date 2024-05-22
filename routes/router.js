@@ -823,7 +823,6 @@ router.post('/writepost', async (req, res) => {
     } 
   });
 
-
   /** 유저 프로필 가져오기 */
   router.post('/user-profile', async (req, res) => {
     const { email } = req.body;
@@ -895,6 +894,108 @@ router.post('/update-profile', async (req, res) => {
         res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
     }
 });
+
+/** 관리중인 유저 조회 */
+router.post('/managed-users', async (req, res) => {
+    const { mgremail } = req.body;
+    console.log("select");
+    try {
+        const connection = await db.connectToOracle();
+
+        const sql = `
+            SELECT USER_NAME, USER_BIRTHDATE, TO_CHAR(JOINED_AT, 'YYYY-MM-DD HH24:MI') as JOINED_AT
+            FROM TB_USER
+            WHERE USER_EMAIL IN (SELECT user_email FROM TB_MANAGEMENT WHERE mgr_id = :mgremail)
+        `;
+
+        const params = { mgremail };
+
+        const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        console.log(result.rows);
+
+        if (result.rows.length > 0) {
+            const managedUsers = result.rows.map(row => ({
+                USER_NAME: row.USER_NAME,
+                USER_BIRTHDATE: row.USER_BIRTHDATE,
+                JOINED_AT: row.JOINED_AT
+            }));
+            res.json({ success: true, managedUsers });
+        } else {
+            res.json({ success: false, message: 'No managed users found' });
+        }
+
+        await connection.close();
+    } catch (error) {
+        console.error('Error fetching managed users:', error);
+        res.status(500).json({ success: false, message: 'Error fetching managed users' });
+    }
+});
+
+/** 관리유저 추가 */
+router.post('/add-user', async (req, res) => {
+    const { mgremail,  newuserEmail} = req.body;
+
+    try {
+        const connection = await db.connectToOracle();
+
+        // Construct the SQL query to insert data into TB_MANAGEMENT
+        const sql = `
+            INSERT INTO TB_MANAGEMENT (MGR_ID, USER_EMAIL, CREATED_AT)
+            VALUES (:mgremail, :newuserEmail, sysdate)
+        `;
+
+        const params = { mgremail, newuserEmail };
+        console.log(mgremail, newuserEmail)
+        // Execute the SQL query
+        const result = await connection.execute(sql, params);
+        console.log("result", result.rowsAffected)
+        // Check if any rows were affected (inserted)
+        if (result.rowsAffected  > 0) {
+            res.json({ success: true, message: 'Managed user added successfully' });
+        } else {
+            res.json({ success: false, message: 'Failed to add managed user' });
+        }
+
+        await connection.close();
+    } catch (error) {
+        console.error('Error adding managed user:', error);
+        res.status(500).json({ success: false, message: 'Error adding managed user' });
+    }
+});
+
+
+/** 관리유저 삭제 */
+router.post('/delete-user', async (req, res) => {
+    const { mgrId, userEmail } = req.body;
+
+    try {
+        const connection = await db.connectToOracle();
+
+        // Construct the SQL query to delete data from TB_MANAGEMENT
+        const sql = `
+            DELETE FROM TB_MANAGEMENT
+            WHERE MGR_ID = :mgrId AND USER_EMAIL = :userEmail
+        `;
+
+        const params = { mgrId, userEmail };
+
+        // Execute the SQL query
+        const result = await connection.execute(sql, params);
+
+        // Check if any rows were affected (deleted)
+        if (result.rowsAffected && result.rowsAffected[0] > 0) {
+            res.json({ success: true, message: 'User data deleted successfully' });
+        } else {
+            res.json({ success: false, message: 'No matching data found to delete' });
+        }
+
+        await connection.close();
+    } catch (error) {
+        console.error('Error deleting user data:', error);
+        res.status(500).json({ success: false, message: 'Error deleting user data' });
+    }
+});
+
 /** 문의하기 메일 발송 */
 router.post('/sendFeedback', async (req, res) => {
     const { category, message } = req.body;
