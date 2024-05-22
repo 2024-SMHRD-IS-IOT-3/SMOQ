@@ -38,7 +38,7 @@ const Journal = () => {
   );
 
   const writepost = () => {
-    navigate("/write");
+    navigate("/write_mgr");
   };
 
   return (
