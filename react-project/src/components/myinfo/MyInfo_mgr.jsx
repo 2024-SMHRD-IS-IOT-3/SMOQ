@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header_mgr from "../header/Header_mgr";
+import Header from '../header/Header'
 import Footermgr from "../footer/Footer_mgr";
 import "./myinfo.css";
 
@@ -38,7 +38,7 @@ const MyInfo_mgr = () => {
 
   return (
     <div className="myinfo-container">
-      <Header_mgr/>
+      <Header/>
         <div className='myinfo-body'>
           <p>기본정보</p>
           <button className='profile-button' onClick={handleProfileEdit}>프로필 변경</button>

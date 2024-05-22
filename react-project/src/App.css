@@ -736,6 +736,7 @@ svg {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  font-size: 18px;
 }
 
 .user-table1 th, .user-table1 td {
@@ -745,8 +746,9 @@ svg {
 }
 
 .user-table1 th {
-  background-color: #f2f2f2;
+  background-color: #50a5f0;
   font-weight: bold;
+  color: white;
 }
 
 .button-wrapper {
@@ -759,7 +761,7 @@ svg {
 .btnselectmgr {
   padding: 10px 20px;
   font-size: 1rem;
-  background-color: #50a5f0 !important;
+  background-color: #2ecc71 !important;
   border: none;
   border-radius: 5px;
   color: #fff;
