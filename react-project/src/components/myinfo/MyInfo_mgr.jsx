@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Header_mgr from "../header/Header_mgr";
 import Footermgr from "../footer/Footer_mgr";
+import "./myinfo.css";
 import axios from "../../axios";
 
 const MyInfo_mgr = () => {
@@ -42,12 +43,12 @@ const MyInfo_mgr = () => {
   };
 
   const handleLogout = () => {
-    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
+    const confirmLogout = window.confirm("로그아웃 하시겠습니까?");
     if (confirmLogout) {
       // Clear sessionStorage
       sessionStorage.clear();
       // Navigate to the '/' page
-      navigate('/');
+      navigate("/");
     }
   };
 

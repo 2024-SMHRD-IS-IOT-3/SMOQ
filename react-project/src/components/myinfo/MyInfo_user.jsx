@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import axios from "../../axios";
+import "./myinfo.css";
 
 const MyInfo_user = () => {
   const navigate = useNavigate();
@@ -26,9 +27,11 @@ const MyInfo_user = () => {
   const handleResign = async () => {
     try {
       const email = sessionStorage.getItem("email");
+      console.log(email);
       const response = await axios.post("/resign", { email });
 
       if (response.data.success) {
+        console.log("ab");
         sessionStorage.removeItem("email");
         alert("회원 탈퇴가 성공적으로 처리되었습니다.");
         navigate("/");

@@ -3,6 +3,7 @@ import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import "./myinfo.css";
 
 const validatePassword = (password) => {
   const passwordPattern =
@@ -97,6 +98,7 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="currentPassword">현재 비밀번호</label>
           <input
+            className="myinput"
             type="password"
             id="currentPassword"
             name="currentPassword"
@@ -107,6 +109,7 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="newPassword">변경할 비밀번호</label>
           <input
+            className="myinput"
             type="password"
             id="newPassword"
             name="newPassword"
@@ -118,6 +121,7 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="confirmPassword">비밀번호 재확인</label>
           <input
+            className="myinput"
             type="password"
             id="confirmPassword"
             name="confirmPassword"

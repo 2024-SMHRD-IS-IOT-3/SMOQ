@@ -152,11 +152,11 @@ router.post('/sendcode', async (req, res) => {
 /** 회원가입 - 사용자 */
 router.post('/joinDatauser', async (req, res) => {
     const {email, password, name, nickname, birthDate, smokeCount} = req.body
-
+    console.log(birthDate)
     try {
         const connection = await db.connectToOracle();
         const sql = `INSERT INTO TB_USER (USER_EMAIL, USER_PW, USER_NAME, USER_NICK, USER_BIRTHDATE, USER_SMOKE_CNT, JOINED_AT)
-                     VALUES (:email, :password, :name, :nickname, TO_DATE(:birthDate, 'YYYY-MM-DD'), :smokeCount, SYSDATE)`;
+                     VALUES (:email, :password, :name, :nickname, TO_DATE(:birthDate, 'MM-DD-YYYY'), :smokeCount, SYSDATE)`;
 
         const sql2 = `INSERT INTO TB_WRITING_USER (USER_EMAIL) VALUES (:email)`
         const params = { email, password, name, nickname, birthDate, smokeCount };
@@ -904,40 +904,52 @@ router.post('/resign', async (req, res) => {
   
       await connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
   
-      await connection.execute(
+      const result1 = await connection.execute(
         'DELETE FROM TB_SMOKING_SENSOR WHERE USER_EMAIL = :email',
         { email }
       );
-
+    
+      console.log('df')
       const result = await connection.execute(
         'SELECT WRITING_USER FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
         { email }
       );
-  
-      if (result.rows.length === 0) {
-        return res.status(400).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+      console.log(result)
+      
+      console.log("CC5")
+      if (result.rows.length > 0) {
+        const writingUser = result.rows[0][0];
+        console.log("Found writingUser:", writingUser);
+        console.log("CC4")
+        // TB_COMMENT에서 삭제
+        await connection.execute(
+          'DELETE FROM TB_COMMENT WHERE WRITING_USER = :writingUser',
+          { writingUser }
+        );
+        console.log("CC3")
+        // TB_POST에서 삭제
+        await connection.execute(
+          'DELETE FROM TB_POST WHERE WRITING_USER = :writingUser',
+          { writingUser }
+        );
+        console.log("CC2")
+        // TB_WRITING_USER에서 삭제
+        await connection.execute(
+          'DELETE FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
+          { email }
+        );
+      } else {
+        console.log("No WRITING_USER found for email:", email);
       }
-  
-      const writingUser = result.rows[0][0];
-      await connection.execute(
-        'DELETE FROM TB_COMMENT WHERE WRITING_USER = :writingUser',
-        { writingUser }
-      );
-      await connection.execute(
-        'DELETE FROM TB_POST WHERE WRITING_USER = :writingUser',
-        { writingUser }
-      );
-      await connection.execute(
-        'DELETE FROM TB_WRITING_USER WHERE USER_EMAIL = :email',
-        {  email }
-      );
+      console.log("CC1")
       await connection.execute(
         'DELETE FROM TB_USER WHERE USER_EMAIL = :email',
         {  email }
       );
-  
+  console.log("CC")
       await connection.commit();
-  
+      console.log("DD")
+      console.log(result)
       res.status(200).json({ success: true, message: '회원 탈퇴가 성공적으로 처리되었습니다.' });
     } catch (error) {
       if (connection) {

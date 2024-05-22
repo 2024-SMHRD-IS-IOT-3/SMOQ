@@ -3,6 +3,7 @@ import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import "./myinfo.css";
 
 const Feedback = () => {
   const [feedback, setFeedback] = useState({
