@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
-import Footer from "../footer/Footer";
 import JournalItem from "./JournalItem";
-import "./journal.css";
 import { IoSearch } from "react-icons/io5";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import Footermgr from "../footer/Footer_mgr";
+import "./journal.css";
 
 const Journal = () => {
   const [journalData, setJournalData] = useState([]);
@@ -75,7 +75,7 @@ const Journal = () => {
         ))}
       </div>
       <div className="footer">
-        <Footer />
+        <Footermgr />
       </div>
     </div>
   );

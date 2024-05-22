@@ -1,56 +1,68 @@
-import React, { useState } from 'react';
-import { FaHeart, FaComment } from 'react-icons/fa';
+import React, { useState } from "react";
+import { FaHeart, FaComment } from "react-icons/fa";
 import { FaRegFaceGrin } from "react-icons/fa6";
 import { IoCheckboxOutline } from "react-icons/io5";
-import axios from "../../axios"
-import { useNavigate } from 'react-router-dom';
+import axios from "../../axios";
+import { useNavigate } from "react-router-dom";
+import "./journal.css";
 
-const JournalItem = ({ id, user, date, content, initialLikes, comments }) => {
-
-  const [likes, setLikes] = useState(initialLikes || 0); 
-  const [isLiking, setIsLiking] = useState(false); 
+const JournalItem = ({
+  id,
+  user,
+  date,
+  content,
+  initialLikes,
+  comments,
+  writingUser,
+}) => {
+  const [likes, setLikes] = useState(initialLikes || 0);
+  const [isLiking, setIsLiking] = useState(false);
   const navigate = useNavigate();
 
   const handlePostLike = async () => {
-    if (isLiking) return; 
+    if (isLiking) return;
     setIsLiking(true);
-    console.log("id", id)
-    console.log("user",user)
-    console.log("date",date)
-    console.log("content",content)
-    console.log("initialLikes",initialLikes)
-    console.log("comments",comments)
+    console.log("id", id);
+    console.log("user", user);
+    console.log("date", date);
+    console.log("content", content);
+    console.log("initialLikes", initialLikes);
+    console.log("comments", comments);
+    console.log("writingUser", writingUser);
 
     try {
-      const response = await axios.post('/update-like', { postId: id });
+      const response = await axios.post("/update-like", { postId: id });
       if (response.data.success) {
         setLikes(likes + 1);
       } else {
-        console.error('Failed to update likes');
+        console.error("Failed to update likes");
       }
     } catch (error) {
-      console.error('Error updating likes:', error);
+      console.error("Error updating likes:", error);
     } finally {
       setIsLiking(false);
     }
   };
 
   const handlePostComment = () => {
-    navigate(`/journal_comment/${id}`);
-  }
-  
+    navigate(`/journal_comment/${id}`, { state: { writingUser } });
+  };
 
   return (
     <div className="journal-item">
       <div className="journal-header">
         <div className="user-info">
           <div>
-            <span className="user-icon"><FaRegFaceGrin /></span>
+            <span className="user-icon">
+              <FaRegFaceGrin />
+            </span>
           </div>
-          <div className='user-date'>
-            <div className='user-data'>
+          <div className="user-date">
+            <div className="user-data">
               <span className="user-name">{user}</span>
-              <span className='user-icon2'><IoCheckboxOutline /></span>
+              <span className="user-icon2">
+                <IoCheckboxOutline />
+              </span>
             </div>
             <span className="post-date">{date}</span>
           </div>

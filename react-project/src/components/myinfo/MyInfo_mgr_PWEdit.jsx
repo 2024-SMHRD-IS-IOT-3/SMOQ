@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Header from "../header/Header";
-import Footer from "../footer/Footer";
+import Header_mgr from "../header/Header_mgr";
+import Footermgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
 import "./myinfo.css";
@@ -85,12 +85,12 @@ const PWEdit = () => {
   };
 
   const handleCancel = () => {
-    navigate("/MyInfo_user");
+    navigate("/MyInfo_mgr");
   };
 
   return (
     <div className="myinfo-container">
-      <Header />
+      <Header_mgr />
       <div className="myinfo-header">
         <h2>비밀번호 변경</h2>
       </div>
@@ -98,7 +98,6 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="currentPassword">현재 비밀번호</label>
           <input
-            className="myinput"
             type="password"
             id="currentPassword"
             name="currentPassword"
@@ -109,7 +108,6 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="newPassword">변경할 비밀번호</label>
           <input
-            className="myinput"
             type="password"
             id="newPassword"
             name="newPassword"
@@ -121,7 +119,6 @@ const PWEdit = () => {
         <div className="form-group">
           <label htmlFor="confirmPassword">비밀번호 재확인</label>
           <input
-            className="myinput"
             type="password"
             id="confirmPassword"
             name="confirmPassword"
@@ -140,7 +137,7 @@ const PWEdit = () => {
         </div>
       </form>
       <div className="footer">
-        <Footer />
+        <Footermgr />
       </div>
     </div>
   );

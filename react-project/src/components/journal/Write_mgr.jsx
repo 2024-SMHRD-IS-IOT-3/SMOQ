@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Header from "../header/Header";
 import axios from "../../axios";
-import "./journal.css";
 import { useLocation } from "react-router-dom";
 import Footermgr from "../footer/Footer_mgr";
+import "./journal.css";
 
 const Write = () => {
   const location = useLocation();

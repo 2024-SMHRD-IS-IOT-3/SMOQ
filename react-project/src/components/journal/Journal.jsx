@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import JournalItem from "./JournalItem";
-import "./journal.css";
 import { IoSearch } from "react-icons/io5";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import "./journal.css";
 
 const Journal = () => {
   const [journalData, setJournalData] = useState([]);
@@ -18,6 +18,7 @@ const Journal = () => {
         const res = await axios.get("/journallist");
         if (res.data.success) {
           setJournalData(res.data.data);
+          console.log(res.data.data);
         } else {
           console.error("실패");
         }
@@ -71,6 +72,7 @@ const Journal = () => {
             content={item.content}
             initialLikes={item.likes}
             comments={item.comments}
+            writingUser={item.writingUser}
           />
         ))}
       </div>
