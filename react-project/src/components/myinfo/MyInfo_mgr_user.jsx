@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header_mgr from '../header/Header_mgr';
 import Footermgr from '../footer/Footer_mgr';
 import { useNavigate } from "react-router-dom";
+import "./myinfo.css";
 
 const Device = () => {
     const [searchTerm, setSearchTerm] = useState('');

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Header_mgr from "../header/Header_mgr";
 import Footermgr from "../footer/Footer_mgr";
 import "./myinfo.css";
-import axios from "../../axios";
 
 const MyInfo_mgr = () => {
   const navigate = useNavigate();
@@ -23,23 +22,8 @@ const MyInfo_mgr = () => {
   const handleFeedback = () => {
     navigate("/MyInfo_mgr_Feedback");
   };
-
-  const handleResign = async () => {
-    try {
-      const email = sessionStorage.getItem("email");
-      const response = await axios.post("/resign", { email });
-
-      if (response.data.success) {
-        sessionStorage.removeItem("email");
-        alert("회원 탈퇴가 성공적으로 처리되었습니다.");
-        navigate("/");
-      } else {
-        alert("회원 탈퇴에 실패했습니다.");
-      }
-    } catch (error) {
-      console.error("Error resigning:", error);
-      alert("회원 탈퇴 중 오류가 발생했습니다.");
-    }
+  const handleResign = () => {
+    navigate("/MyInfo_mgr_Resign");
   };
 
   const handleLogout = () => {

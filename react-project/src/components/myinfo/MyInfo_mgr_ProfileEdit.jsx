@@ -3,6 +3,7 @@ import axios from '../../axios';
 import Header_mgr from '../header/Header_mgr';
 import Footermgr from '../footer/Footer_mgr';
 import { useNavigate } from "react-router-dom";
+import "./myinfo.css";
 
 const ProfileEdit = () => {
   const [profile, setProfile] = useState({
@@ -72,15 +73,15 @@ const ProfileEdit = () => {
         </div>
         <div className='form-group'>
           <label htmlFor='email'>이메일</label>
-          <input type='text' id='email' name='email' value={profile.email} disabled />
+          <input type='text' className="myinput" id='email' name='email' value={profile.email} disabled />
         </div>
         <div className='form-group'>
           <label htmlFor='name'>이름</label>
-          <input type='text' id='name' name='name' value={profile.name} disabled />
+          <input type='text' className="myinput" id='name' name='name' value={profile.name} disabled />
         </div>
         <div className='form-group'>
           <label htmlFor='org'>소속기관</label>
-          <input type='text' id='org' name='org' value={profile.org} disabled />
+          <input type='text' className="myinput" id='org' name='org' value={profile.org} disabled />
         </div>
         <div className='profile-actions'>
           <button type="button" onClick={handleCancel}>

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import Header_mgr from "../header/Header_mgr";
-import Footermgr from "../footer/Footer_mgr";
+import Footer_mgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
 import "./myinfo.css";
 
-const Feedback = () => {
+const Resign = () => {
   const [feedback, setFeedback] = useState({
     category: "",
     message: "",
@@ -27,14 +27,27 @@ const Feedback = () => {
 
     try {
       const res = await axios.post("/sendFeedback", feedback);
-      if (res.data.success) {
-        alert("문의 완료");
-      } else {
-        alert("문의 실패");
-      }
     } catch (error) {
       console.error("Error sending feedback:", error);
       alert("전송 에러");
+    }
+    // 
+    try {
+      const email = sessionStorage.getItem("email");
+      console.log(email);
+      const response = await axios.post("/resign", { email });
+
+      if (response.data.success) {
+        console.log("ab");
+        sessionStorage.removeItem("email");
+        alert("회원 탈퇴가 성공적으로 처리되었습니다.");
+        navigate("/");
+      } else {
+        alert("회원 탈퇴에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Error resigning:", error);
+      alert("회원 탈퇴 중 오류가 발생했습니다.");
     }
   };
 
@@ -46,12 +59,12 @@ const Feedback = () => {
     <div className="myinfo-container">
       <Header_mgr />
       <div className="myinfo-header">
-        <h2>문의하기</h2>
+        <h2>회원탈퇴</h2>
       </div>
       <div className="myinfo-body">
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="category">카테고리</label>
+            <label htmlFor="category">탈퇴사유</label>
             <select
               id="category"
               name="category"
@@ -78,15 +91,15 @@ const Feedback = () => {
             <button type="button" onClick={handleCancel}>
               취소
             </button>
-            <button type="submit">보내기</button>
+            <button type="submit">탈퇴하기</button>
           </div>
         </form>
       </div>
       <div className="footer">
-        <Footermgr />
+        <Footer_mgr />
       </div>
     </div>
   );
 };
 
-export default Feedback;
+export default Resign;

@@ -3,6 +3,7 @@ import Header_mgr from "../header/Header_mgr";
 import Footermgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import "./myinfo.css";
 
 const validatePassword = (password) => {
   const passwordPattern =
