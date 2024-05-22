@@ -27,10 +27,13 @@ const MyInfo_user = () => {
   };
 
   const handleLogout = () => {
-    // Clear sessionStorage
-    sessionStorage.clear();
-    // Navigate to the '/' page
-    navigate('/');
+    const confirmLogout = window.confirm('로그아웃 하시겠습니까?');
+    if (confirmLogout) {
+      // Clear sessionStorage
+      sessionStorage.clear();
+      // Navigate to the '/' page
+      navigate('/');
+    }
   };
 
   return (

@@ -1,42 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../header/Header';
 import Footer from '../footer/Footer';
 
 const ProfileEdit = () => {
   const [profile, setProfile] = useState({
     profilePicture: '/path/to/default_profile.jpg',
-    nickname: '',
-    name: '',
-    email: '',
-    birthday: ''
+    nickname: '홍길동',
+    name: '홍길동',
+    email: 'user@example.com',
+    birthday: '1990-01-01'
   });
-
-  useEffect(() => {
-    // Fetch user profile data from backend when component mounts
-    const fetchUserProfile = async () => {
-      try {
-        // 세션 스토리지에서 이메일 가져오기
-        const userEmail = sessionStorage.getItem('email');
-
-        const response = await fetch(`/api/user-profile/${userEmail}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user profile');
-        }
-        const userData = await response.json();
-        setProfile({
-          profilePicture: userData.userProfile.profilePicture || '/path/to/default_profile.jpg',
-          nickname: userData.userProfile.USER_NICK || '',
-          name: userData.userProfile.USER_NAME || '',
-          email: userData.userProfile.USER_EMAIL || '',
-          birthday: userData.userProfile.USER_BIRTHDATE || '1990-01-01'
-        });
-      } catch (error) {
-        console.error('Failed to fetch user profile:', error);
-      }
-    };
-
-    fetchUserProfile();
-  }, []); // Run effect only once on mount
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,13 +26,14 @@ const ProfileEdit = () => {
       const response = await fetch('/api/update-profile', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            email: profile.email,
-            newNickname: profile.nickname
+          email: profile.email,
+          newNickname: profile.nickname
+          // Include other fields to update here if needed
         })
-    });
+      });
 
       const data = await response.json();
       console.log(data); // Log response from the server

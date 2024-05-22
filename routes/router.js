@@ -750,4 +750,75 @@ router.post('/writepost', async (req, res) => {
     } 
   });
 
+/** 사용자 프로필 가져오기 */
+router.get('/user-profile/:email', async (req, res) => {
+    const userEmail = req.params.email;
+
+    try {
+        const connection = await db.connectToOracle();
+        
+        // 사용자 정보를 가져오는 SQL 쿼리
+        const sql = `
+            SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, USER_SMOKE_CNT
+            FROM TB_USER
+            WHERE USER_EMAIL = :userEmail
+        `;
+        
+        // SQL 쿼리 실행
+        const result = await connection.execute(sql, [userEmail], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        await connection.close();
+
+        // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
+        if (result.rows.length > 0) {
+            const userProfile = result.rows[0];
+            res.json({ success: true, userProfile });
+        } else {
+            res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+    } catch (error) {
+        console.error('사용자 프로필 가져오기 실패:', error);
+        res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
+    }
+});
+
+/** 유저 프로필 수정 */
+router.post('/update-profile', async (req, res) => {
+    console.log("Update profile endpoint hit with data:", req.body);
+    const { email, newNickname } = req.body;
+
+    try {
+        const connection = await db.connectToOracle();
+        
+        // 사용자가 존재하는지 확인
+        const userCheckSql = `SELECT * FROM TB_USER WHERE USER_EMAIL = :email`;
+        const userCheckResult = await connection.execute(userCheckSql, [email]);
+
+        if (userCheckResult.rows.length === 0) {
+            await connection.close();
+            return res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        // 사용자 프로필 업데이트
+        const updateSql = `
+            UPDATE TB_USER 
+            SET USER_NICK = :newNickname
+            WHERE USER_EMAIL = :email
+        `;
+        const updateParams = {
+            newNickname,
+            email
+        };
+
+        await connection.execute(updateSql, updateParams, { autoCommit: true });
+
+        await connection.close();
+
+        res.json({ success: true, message: '프로필이 성공적으로 업데이트되었습니다.' });
+    } catch (error) {
+        console.error('프로필 업데이트 실패:', error);
+        res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
+    }
+});
+
 module.exports = router;
