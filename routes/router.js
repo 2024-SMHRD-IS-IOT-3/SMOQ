@@ -554,14 +554,35 @@ router.get('/journallist', async (req, res) => {
       const journalData = await Promise.all(result.rows.map(async (row) => {
         const postContent = await lobToString(row.POST_CONTENT);
         const commentCount = await getCommentCount(connection, row.POST_IDX);
+  
+        // WRITING_USER를 사용하여 이메일을 검색
+        const emailResult = await connection.execute(
+          'SELECT USER_EMAIL FROM TB_WRITING_USER WHERE WRITING_USER = :writingUser',
+          { writingUser: row.WRITING_USER },
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+  
+        const userEmail = emailResult.rows.length > 0 ? emailResult.rows[0].USER_EMAIL : null;
 
+        // userEmail로 WRITING_USER 가져오기
+      const writingUserResult = await connection.execute(
+        'SELECT WRITING_USER FROM TB_WRITING_USER WHERE USER_EMAIL = :userEmail',
+        { userEmail },
+        { outFormat: oracledb.OUT_FORMAT_OBJECT }
+      );
+
+      const writingUser = writingUserResult.rows.length > 0 ? writingUserResult.rows[0].WRITING_USER : null;
+      console.log(writingUser)
+
+  
         return {
           id: row.POST_IDX,
-          user: row.WRITING_USER,
+          user: userEmail, 
           content: postContent,
           date: row.CREATED_AT,
           likes: row.POST_LIKES,
-          comments: commentCount
+          comments: commentCount,
+          writingUser: writingUser
         };
       }));
   
@@ -573,7 +594,7 @@ router.get('/journallist', async (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to fetch journal posts' });
     }
   });
-  
+
   /** post_idx에 따른 댓글 개수 가져오기 */
   async function getCommentCount(connection, postIdx) {
     try {
@@ -664,67 +685,96 @@ router.post('/handlemap', async(req, res)=> {
 
 /** 클릭한 게시글 내용 */
 router.get('/post/:id', async (req, res) => {
-    const { id } = req.params;
-  
-    if (!id || isNaN(id)) {
-      return res.status(400).json({ success: false, message: 'Post ID must be a valid number' });
-    }
-  
-    try {
-      const connection = await db.connectToOracle();
-      const postSql = `SELECT POST_IDX, WRITING_USER, POST_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT, POST_LIKES FROM TB_POST WHERE POST_IDX = :ids`;
-      const postResult = await connection.execute(postSql, [parseInt(id)], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-  
-      if (postResult.rows.length === 0) {
-        await connection.close();
-        return res.status(404).json({ success: false, message: 'Post not found' });
-      }
-  
-      const postContent = await lobToString(postResult.rows[0].POST_CONTENT);
-      const post = {
-        user: postResult.rows[0].WRITING_USER,
-        content: postContent,
-        date: postResult.rows[0].CREATED_AT,
-        likes: postResult.rows[0].POST_LIKES,
-      };
-  
+  const { id } = req.params;
+
+  if (!id || isNaN(id)) {
+    return res.status(400).json({ success: false, message: 'Post ID must be a valid number' });
+  }
+
+  try {
+    const connection = await db.connectToOracle();
+    const postSql = `SELECT POST_IDX, WRITING_USER, POST_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI') AS CREATED_AT, POST_LIKES FROM TB_POST WHERE POST_IDX = :id`;
+    const postResult = await connection.execute(postSql, [parseInt(id)], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+    if (postResult.rows.length === 0) {
       await connection.close();
-  
-      res.json({ success: true, post });
-    } catch (error) {
-      console.error('Failed to fetch post data:', error);
-      res.status(500).json({ success: false, message: 'Failed to fetch post data' });
+      return res.status(404).json({ success: false, message: 'Post not found' });
     }
-  });
+
+    const postContent = await lobToString(postResult.rows[0].POST_CONTENT);
+
+    // WRITING_USER를 사용하여 이메일을 검색
+    const writingUser = postResult.rows[0].WRITING_USER;
+    const emailResult = await connection.execute(
+      'SELECT USER_EMAIL FROM TB_WRITING_USER WHERE WRITING_USER = :writingUser',
+      { writingUser },
+      { outFormat: oracledb.OUT_FORMAT_OBJECT }
+    );
+
+    const userEmail = emailResult.rows.length > 0 ? emailResult.rows[0].USER_EMAIL : null;
+
+    const post = {
+      user: userEmail, // 이메일을 user 필드로 설정
+      content: postContent,
+      date: postResult.rows[0].CREATED_AT,
+      likes: postResult.rows[0].POST_LIKES,
+    };
+
+    await connection.close();
+
+    res.json({ success: true, post });
+  } catch (error) {
+    console.error('Failed to fetch post data:', error);
+    res.status(500).json({ success: false, message: 'Failed to fetch post data' });
+  }
+});
+
 
 /** 클릭한 게시글의 댓글 목록 */
 router.get('/postcomments/:id', async (req, res) => {
     const postId = req.params.id;
 
-    console.log("postID",postId)
+    console.log("postID", postId);
   
     try {
       const connection = await db.connectToOracle();
   
       const result = await connection.execute(
-        `SELECT WRITING_USER, CMT_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT FROM TB_COMMENT WHERE POST_IDX = :postId ORDER BY CREATED_AT DESC`,
-        [postId]
+        `SELECT WRITING_USER, CMT_CONTENT, TO_CHAR(CREATED_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATED_AT 
+         FROM TB_COMMENT 
+         WHERE POST_IDX = :postId 
+         ORDER BY CREATED_AT DESC`,
+        [postId],
+        { outFormat: oracledb.OUT_FORMAT_OBJECT }
       );
   
-      const comments = result.rows.map(row => ({
-        user: row[0],
-        content: row[1],
-        date: row[2]
+      const comments = await Promise.all(result.rows.map(async row => {
+        const writingUser = row.WRITING_USER;
+
+        // WRITING_USER를 사용하여 이메일 조회
+        const emailResult = await connection.execute(
+          'SELECT USER_EMAIL FROM TB_WRITING_USER WHERE WRITING_USER = :writingUser',
+          { writingUser },
+          { outFormat: oracledb.OUT_FORMAT_OBJECT }
+        );
+
+        const userEmail = emailResult.rows.length > 0 ? emailResult.rows[0].USER_EMAIL : null;
+
+        return {
+          user: userEmail,
+          content: row.CMT_CONTENT,
+          date: row.CREATED_AT
+        };
       }));
 
-      console.log("comments", comments)
+      console.log("comments", comments);
   
       res.json({ success: true, comments });
     } catch (error) {
       console.error('Error fetching comments:', error);
       res.json({ success: false, message: 'Failed to fetch comments' });
-    } 
-    });
+    }
+});
   
 /** 댓글작성 */
 router.post('/post/:id/comment', async (req, res) => {
@@ -733,7 +783,8 @@ router.post('/post/:id/comment', async (req, res) => {
         
     const intid = parseInt(id, 10)
     const intuser = parseInt(user, 10)
-        console.log(id, intuser,content)
+        console.log(id, intuser, content)
+        console.log("s")
     try {
         const connection = await db.connectToOracle();
         const sql = `INSERT INTO TB_COMMENT (POST_IDX, CMT_CONTENT, CREATED_AT, WRITING_USER) VALUES (:intid, :content, sysdate, :intuser)`;
@@ -748,28 +799,50 @@ router.post('/post/:id/comment', async (req, res) => {
     }
 });
 
+/** 게시글을 작성 */
+router.post('/writepost', async (req, res) => {
+    const { content, email } = req.body;
+
+  
+    try {
+      const connection = await db.connectToOracle();
+      const sql = `INSERT INTO TB_POST (POST_CONTENT, CREATED_AT, WRITING_USER)
+      VALUES (
+          :content,
+          SYSDATE,
+          (SELECT writing_user FROM TB_WRITING_USER WHERE USER_EMAIL = :email)
+      )`;
+      const params = { content, email};
+  
+      await connection.execute(sql, params, { autoCommit: true });
+  
+      res.json({ success: true, message: 'Post saved successfully.' });
+    } catch (error) {
+      console.error('Failed to save post:', error);
+      res.status(500).json({ success: false, message: 'Failed to save post', error: error.message });
+    } 
+  });
+
+
   /** 유저 프로필 가져오기 */
-router.post('/user-profile', async (req, res) => {
+  router.post('/user-profile', async (req, res) => {
     const { email } = req.body;
-    console.log('Fetching user profile with email:', email); // Add console log for email
-    
+    console.log(email);
     try {
         const connection = await db.connectToOracle();
-        console.log("user-profile"); // Add console log for indication
-        
+        console.log("user-profile");
         // 사용자 정보를 가져오는 SQL 쿼리
         const sql = `
         SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
-        FROM TB_USER
-        WHERE USER_EMAIL = :email
-        `;
+FROM TB_USER
+WHERE USER_EMAIL = :email;
+`;
         
         // SQL 쿼리 실행
         const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         await connection.close();
-        console.log('User profile query result:', result.rows); // Add console log for query result
-        
+        console.log(result.rows);
         // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
         if (result.rows.length > 0) {
             const userProfile = result.rows[0];
@@ -782,7 +855,6 @@ router.post('/user-profile', async (req, res) => {
         res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
     }
 });
-
 
 /** 유저 프로필 수정 */
 router.post('/update-profile', async (req, res) => {
@@ -823,7 +895,6 @@ router.post('/update-profile', async (req, res) => {
         res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
     }
 });
-
 /** 문의하기 메일 발송 */
 router.post('/sendFeedback', async (req, res) => {
     const { category, message } = req.body;

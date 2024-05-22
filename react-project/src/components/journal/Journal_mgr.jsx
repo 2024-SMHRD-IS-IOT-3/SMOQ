@@ -6,6 +6,7 @@ import "./journal.css";
 import { IoSearch } from "react-icons/io5";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import Footermgr from "../footer/Footer_mgr";
 
 const Journal = () => {
   const [journalData, setJournalData] = useState([]);
@@ -75,7 +76,7 @@ const Journal = () => {
         ))}
       </div>
       <div className="footer">
-        <Footer />
+        <Footermgr />
       </div>
     </div>
   );
