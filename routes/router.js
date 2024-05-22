@@ -4,6 +4,7 @@ const db = require('../config/db');
 const oracledb = require('oracledb')
 const path = require('path')
 const { sendEmail } = require('../config/email');
+const bcrypt = require('bcrypt');
 
 // 메인 경로
 router.get('/', (req, res) => {
@@ -749,5 +750,73 @@ router.post('/writepost', async (req, res) => {
       res.status(500).json({ success: false, message: 'Failed to save post', error: error.message });
     } 
   });
+
+/** 문의하기 메일 발송 */
+router.post('/sendFeedback', async (req, res) => {
+    const { category, message } = req.body;
+    console.log("message",category, message)
+    const emailContent = `카테고리: ${category}\n\n ${message}`;
+    
+    try {
+        await sendEmail('g8793173@gmail.com', 'SMOQ 문의', emailContent);
+        console.log('success')
+        res.status(200).json({ success: true, message: 'Feedback sent successfully' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Failed to send feedback' });
+    }
+});
+
+
+/** 비밀번호 변경 */
+router.post('/changePassword', async (req, res) => {
+    const { email, currentPassword, newPassword } = req.body;
+
+    console.log("changePassword");
+    console.log(email);
+
+
+    try {
+        const connection = await db.connectToOracle();
+
+        const result = await connection.execute(
+            'SELECT USER_PW FROM TB_USER WHERE USER_EMAIL = :email',
+            { email }
+        );
+
+        console.log(email);
+        console.log(result.rows);
+        console.log('1');
+
+        if (result.rows.length === 0) {
+            return res.status(400).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+
+        console.log('2');
+        const dbPassword = result.rows[0][0];
+        console.log(dbPassword);
+        console.log(currentPassword)
+        console.log('3');
+
+        if (currentPassword !== dbPassword) {
+            console.log("a");
+            return res.status(400).json({ success: false, message: '현재 비밀번호가 일치하지 않습니다.' });
+        }
+
+        console.log('4');
+
+        await connection.execute(
+            'UPDATE TB_USER SET USER_PW = :newPassword WHERE USER_EMAIL = :email',
+            { newPassword, email },
+            { autoCommit: true }
+        );
+
+        console.log(result.rows);
+
+        res.status(200).json({ success: true, message: '비밀번호가 성공적으로 변경되었습니다.' });
+    } catch (error) {
+        console.error('비밀번호 변경 실패:', error);
+        res.status(500).json({ success: false, message: '비밀번호 변경 실패' });
+    } 
+});
 
 module.exports = router;
