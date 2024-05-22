@@ -344,14 +344,26 @@ router.post('/send-managerpw', async (req, res) => {
 /** 관리자가 유저 조회 */
 router.post('/find-user', async (req, res) => {
     const { name, birthDate } = req.body;
-
+    
     try {
         const connection = await db.connectToOracle();
-        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :birthDate
-        `;
-        const params = { name, birthDate };
-
-        const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        
+        // Convert birthDate to a Date object
+        const parsedBirthDate = new Date(birthDate);
+        
+        // Get the month abbreviation (e.g., 'May')
+        const monthAbbreviation = parsedBirthDate.toLocaleString('en-US', { month: 'short' });
+        
+        // Format the date in a way Oracle understands ('dd-MON-yy')
+        const formattedDate = `${parsedBirthDate.getDate()}-${monthAbbreviation.toUpperCase()}-${parsedBirthDate.getFullYear() % 100}`;
+        
+        console.log(formattedDate);
+        
+        const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :formattedDate`;
+        
+        // Execute the query with the formatted date
+        const result = await connection.execute(sql, { name, formattedDate }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        
         await connection.close();
 
         if (result.rows.length > 0) {
@@ -829,25 +841,27 @@ router.post('/writepost', async (req, res) => {
     } 
   });
 
-  /** 유저 프로필 가져오기 */
-  router.post('/user-profile', async (req, res) => {
+/** 유저 프로필 가져오기 */
+router.post('/user-profile', async (req, res) => {
     const { email } = req.body;
     console.log(email);
     try {
         const connection = await db.connectToOracle();
         console.log("user-profile");
+
         // 사용자 정보를 가져오는 SQL 쿼리
         const sql = `
         SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
-FROM TB_USER
-WHERE USER_EMAIL = :email;
-`;
-        
+        FROM TB_USER
+        WHERE USER_EMAIL = :email
+        `;  // Removed the semicolon
+
         // SQL 쿼리 실행
         const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
         await connection.close();
         console.log(result.rows);
+
         // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
         if (result.rows.length > 0) {
             const userProfile = result.rows[0];
@@ -900,18 +914,52 @@ router.post('/update-profile', async (req, res) => {
         res.status(500).json({ success: false, message: '프로필 업데이트 실패', error: error.message });
     }
 });
+/**  관리자 프로필 가져오기 */
+router.post('/mgr-profile', async (req, res) => {
+    const { email } = req.body;
+    console.log(email);
+    try {
+        const connection = await db.connectToOracle();
+        console.log("user-profile");
+
+        // 사용자 정보를 가져오는 SQL 쿼리
+        const sql = `
+        SELECT MGR_EMAIL, MGR_NAME, MGR_ORG
+        FROM TB_MANAGER
+        WHERE MGR_EMAIL = :email
+        `;  // Removed the semicolon
+
+        // SQL 쿼리 실행
+        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        await connection.close();
+        console.log(result.rows);
+
+        // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
+        if (result.rows.length > 0) {
+            const mgrProfile = result.rows[0];
+            res.json({ success: true, mgrProfile });
+        } else {
+            res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
+        }
+    } catch (error) {
+        console.error('사용자 프로필 가져오기 실패:', error);
+        res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
+    }
+});
 
 /** 관리중인 유저 조회 */
 router.post('/managed-users', async (req, res) => {
     const { mgremail } = req.body;
-    console.log("select");
+    console.log(req.body);
     try {
         const connection = await db.connectToOracle();
 
         const sql = `
-            SELECT USER_NAME, USER_BIRTHDATE, TO_CHAR(JOINED_AT, 'YYYY-MM-DD HH24:MI') as JOINED_AT
+            SELECT TB_USER.USER_NAME, TB_USER.USER_BIRTHDATE, TO_CHAR(TB_USER.JOINED_AT, 'YYYY-MM-DD HH24:MI') AS JOINED_AT, TB_USER.USER_EMAIL
             FROM TB_USER
-            WHERE USER_EMAIL IN (SELECT user_email FROM TB_MANAGEMENT WHERE mgr_id = :mgremail)
+            JOIN TB_MANAGEMENT ON TB_USER.USER_EMAIL = TB_MANAGEMENT.USER_EMAIL
+            WHERE TB_MANAGEMENT.mgr_id = :mgremail
         `;
 
         const params = { mgremail };
@@ -923,7 +971,8 @@ router.post('/managed-users', async (req, res) => {
             const managedUsers = result.rows.map(row => ({
                 USER_NAME: row.USER_NAME,
                 USER_BIRTHDATE: row.USER_BIRTHDATE,
-                JOINED_AT: row.JOINED_AT
+                JOINED_AT: row.JOINED_AT,
+                USER_EMAIL: row.USER_EMAIL // Include user email in the response
             }));
             res.json({ success: true, managedUsers });
         } else {
@@ -939,24 +988,23 @@ router.post('/managed-users', async (req, res) => {
 
 /** 관리유저 추가 */
 router.post('/add-user', async (req, res) => {
-    const { mgremail,  newuserEmail} = req.body;
-
+    const { mgremail, userEmail } = req.body;
+    console.log("Received request to add user with manager email:", mgremail); // Logging
+    console.log("Received request to add user with email:", userEmail); // Logging
     try {
         const connection = await db.connectToOracle();
-
-        // Construct the SQL query to insert data into TB_MANAGEMENT
+        console.log("Successfully connected to Oracle database");
+        
         const sql = `
             INSERT INTO TB_MANAGEMENT (MGR_ID, USER_EMAIL, CREATED_AT)
-            VALUES (:mgremail, :newuserEmail, sysdate)
+            VALUES (:mgremail, :userEmail, SYSDATE)
         `;
 
-        const params = { mgremail, newuserEmail };
-        console.log(mgremail, newuserEmail)
-        // Execute the SQL query
-        const result = await connection.execute(sql, params);
-        console.log("result", result.rowsAffected)
-        // Check if any rows were affected (inserted)
-        if (result.rowsAffected  > 0) {
+        const params = { mgremail, userEmail };
+        console.log("Executing SQL with params:", params); // Logging
+        const result = await connection.execute(sql, params, { autoCommit: true });
+        console.log("SQL execution result:", result); // Logging
+        if (result.rowsAffected > 0) {
             res.json({ success: true, message: 'Managed user added successfully' });
         } else {
             res.json({ success: false, message: 'Failed to add managed user' });
@@ -969,27 +1017,41 @@ router.post('/add-user', async (req, res) => {
     }
 });
 
-
 /** 관리유저 삭제 */
 router.post('/delete-user', async (req, res) => {
     const { mgrId, userEmail } = req.body;
+    console.log(req.body);
+    console.log("Deleting user with:", mgrId, userEmail);
 
     try {
         const connection = await db.connectToOracle();
 
-        // Construct the SQL query to delete data from TB_MANAGEMENT
-        const sql = `
+        // Fetch user email based on mgrId and userEmail
+        const fetchUserEmailSQL = `
+            SELECT USER_EMAIL
+            FROM TB_MANAGEMENT
+            WHERE MGR_ID = :mgrId AND USER_EMAIL = :userEmail
+        `;
+        const fetchUserEmailParams = { mgrId, userEmail };
+        const fetchUserEmailResult = await connection.execute(fetchUserEmailSQL, fetchUserEmailParams);
+        const user = fetchUserEmailResult.rows[0];
+
+        if (!user) {
+            // If no user found, return error
+            return res.json({ success: false, message: 'No matching user found' });
+        }
+
+        // If user found, proceed with deletion
+        const deleteUserSQL = `
             DELETE FROM TB_MANAGEMENT
             WHERE MGR_ID = :mgrId AND USER_EMAIL = :userEmail
         `;
+        const deleteUserParams = { mgrId, userEmail };
+        const result = await connection.execute(deleteUserSQL, deleteUserParams, { autoCommit: true });
 
-        const params = { mgrId, userEmail };
+        console.log("SQL execution result:", result);
 
-        // Execute the SQL query
-        const result = await connection.execute(sql, params);
-
-        // Check if any rows were affected (deleted)
-        if (result.rowsAffected && result.rowsAffected[0] > 0) {
+        if (result.rowsAffected && result.rowsAffected > 0) {
             res.json({ success: true, message: 'User data deleted successfully' });
         } else {
             res.json({ success: false, message: 'No matching data found to delete' });

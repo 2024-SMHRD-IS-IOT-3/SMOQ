@@ -22,7 +22,6 @@ function User() {
     try {
       const response = await axios.post("/managed-users", { mgremail });
       console.log("Response from server:", response); // 서버 응답 확인용 로그
-      console.log("Data from server:", response.data); // 서버에서 받은 데이터 확인용 로그
       if (response.data.success) {
         setManagedUsers(response.data.managedUsers);
         setMessage("");
@@ -42,9 +41,11 @@ function User() {
 
   const handleAddUser = async () => {
     const mgremail = sessionStorage.getItem("email");
+    console.log("Adding user with manager email:", mgremail); // Logging
+    console.log("Adding new user email:", newUserEmail); // Logging
     try {
       const response = await axios.post("/add-user", { mgremail, userEmail: newUserEmail });
-      console.log("result", response.data.success);
+      console.log("Result from server:", response.data);
       if (response.data.success) {
         alert('유저를 등록했습니다');
         fetchManagedUsers();
@@ -60,9 +61,12 @@ function User() {
   };
 
   const handleDeleteUser = async (userEmail) => {
+    console.log("Deleting user with email:", userEmail); // Logging
     const mgrId = sessionStorage.getItem("email");
+    console.log("Manager ID:", mgrId); // Logging
     try {
       const response = await axios.post("/delete-user", { mgrId, userEmail });
+      console.log("Response from server:", response); // Logging
       if (response.data.success) {
         fetchManagedUsers();
       } else {

@@ -4,6 +4,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { FaKey } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axios";
+import logo from '../../assets/logo.png'
 
 const First = () => {
   const [view, setView] = useState("main");
@@ -96,7 +97,7 @@ const First = () => {
       {view === "main" && (
         <>
           <div className="first-title">
-            <h1>SMOQ</h1>
+            <img src={logo} id="logo"/>
           </div>
           <Button
             variant="secondary"

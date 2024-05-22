@@ -15,9 +15,9 @@ const MyInfo_user = () => {
     navigate("/MyInfo_user_PWEdit");
   };
 
-  const handleDevice = () => {
-    navigate("/MyInfo_user_Device");
-  };
+  // const handleDevice = () => {
+  //   navigate("/MyInfo_user_Device");
+  // };
 
   const handleFeedback = () => {
     navigate("/MyInfo_user_Feedback");
@@ -49,9 +49,9 @@ const MyInfo_user = () => {
         <button className="profile-button" onClick={handlePWEdit}>
           비밀번호 변경
         </button>
-        <button className="profile-button" onClick={handleDevice}>
+        {/* <button className="profile-button" onClick={handleDevice}>
           등록 기기관리
-        </button>
+        </button> */}
       </div>
       <div className="myinfo-body">
         <p>고객센터</p>

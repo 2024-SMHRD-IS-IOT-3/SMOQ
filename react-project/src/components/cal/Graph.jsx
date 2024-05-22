@@ -118,8 +118,8 @@ const Graph = () => {
         type: "bar",
         label: "담배 피운 횟수",
         data: data.map((item) => item[1]), // 담배 피운 횟수 데이터
-        backgroundColor: "rgba(255, 99, 132, 0.5)",
-        borderColor: "rgba(255, 99, 132, 1)",
+        backgroundColor: "rgba(80,165,240, 0.5)",
+        borderColor: "rgba(80,165,240, 0.5)",
         borderWidth: 1,
       },
     ],
@@ -155,10 +155,10 @@ const Graph = () => {
       <div className="controls">
         <div className="cal-text">
           <button id="calbtn" onClick={handleCalendarClick}>
-            캘린더
+            캘린더로 보기 {'>'}
           </button>
           <Link to="/Cal_Detail" id="lk">
-            자세히보기{">"}
+            자세히보기 {">"}
           </Link>
         </div>
         <div className='date-picker'>
