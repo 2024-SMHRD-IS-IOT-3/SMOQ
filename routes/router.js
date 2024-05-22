@@ -904,12 +904,12 @@ router.post('/update-profile', async (req, res) => {
 /** 관리중인 유저 조회 */
 router.post('/managed-users', async (req, res) => {
     const { mgremail } = req.body;
-    console.log("select");
+    console.log(req.body);
     try {
         const connection = await db.connectToOracle();
 
         const sql = `
-            SELECT USER_NAME, USER_BIRTHDATE, TO_CHAR(JOINED_AT, 'YYYY-MM-DD HH24:MI') as JOINED_AT
+            SELECT USER_NAME, USER_BIRTHDATE, TO_CHAR(JOINED_AT, 'YYYY-MM-DD HH24:MI'), USER_EMAIL as JOINED_AT
             FROM TB_USER
             WHERE USER_EMAIL IN (SELECT user_email FROM TB_MANAGEMENT WHERE mgr_id = :mgremail)
         `;
@@ -969,27 +969,27 @@ router.post('/add-user', async (req, res) => {
     }
 });
 
-
 /** 관리유저 삭제 */
 router.post('/delete-user', async (req, res) => {
     const { mgrId, userEmail } = req.body;
+    console.log(req.body)
+    console.log("Deleting user with:", mgrId, userEmail);
 
     try {
         const connection = await db.connectToOracle();
 
-        // Construct the SQL query to delete data from TB_MANAGEMENT
         const sql = `
             DELETE FROM TB_MANAGEMENT
             WHERE MGR_ID = :mgrId AND USER_EMAIL = :userEmail
         `;
 
         const params = { mgrId, userEmail };
+        console.log("Executing SQL with params:", params);
 
-        // Execute the SQL query
-        const result = await connection.execute(sql, params);
+        const result = await connection.execute(sql, params, { autoCommit: true });
+        console.log("SQL execution result:", result);
 
-        // Check if any rows were affected (deleted)
-        if (result.rowsAffected && result.rowsAffected[0] > 0) {
+        if (result.rowsAffected && result.rowsAffected > 0) {
             res.json({ success: true, message: 'User data deleted successfully' });
         } else {
             res.json({ success: false, message: 'No matching data found to delete' });

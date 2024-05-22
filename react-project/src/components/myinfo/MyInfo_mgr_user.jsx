@@ -25,6 +25,7 @@ function User() {
       console.log("Data from server:", response.data); // 서버에서 받은 데이터 확인용 로그
       if (response.data.success) {
         setManagedUsers(response.data.managedUsers);
+        console.log(managedUsers)
         setMessage("");
       } else {
         setManagedUsers([]);
@@ -60,20 +61,21 @@ function User() {
   };
 
   const handleDeleteUser = async (userEmail) => {
+    console.log("User email:", userEmail);
     const mgrId = sessionStorage.getItem("email");
     try {
-      const response = await axios.post("/delete-user", { mgrId, userEmail });
-      if (response.data.success) {
-        fetchManagedUsers();
-      } else {
-        console.error("사용자 삭제 실패:", response.data.message);
-        setMessage("사용자 삭제 실패");
-      }
+        const response = await axios.post("/delete-user", { mgrId: mgrId, userEmail: userEmail });
+        if (response.data.success) {
+            fetchManagedUsers();
+        } else {
+            console.error("사용자 삭제 실패:", response.data.message);
+            setMessage("사용자 삭제 실패");
+        }
     } catch (error) {
-      console.error("사용자 삭제 실패:", error);
-      setMessage("사용자 삭제 실패");
+        console.error("사용자 삭제 실패:", error);
+        setMessage("사용자 삭제 실패");
     }
-  };
+};
 
   const handleCancel = () => {
     navigate("/MyInfo_mgr");
@@ -106,22 +108,22 @@ function User() {
             </tr>
           </thead>
           <tbody>
-            {managedUsers.length > 0 ? (
-              managedUsers.map((user, index) => (
-                <tr key={index}>
-                  <td>{user.USER_NAME}</td>
-                  <td>{user.USER_BIRTHDATE}</td>
-                  <td>{user.JOINED_AT}</td>
-                  <td>
-                    <button onClick={() => handleDeleteUser(user.USER_EMAIL)}>삭제</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4">등록된 사용자가 없습니다.</td>
-              </tr>
-            )}
+          {managedUsers.length > 0 ? (
+  managedUsers.map((user, index) => (
+    <tr key={index}>
+      <td>{user.USER_NAME}</td>
+      <td>{user.USER_BIRTHDATE}</td>
+      <td>{user.JOINED_AT}</td>
+      <td>
+        <button onClick={() => handleDeleteUser(user.USER_EMAIL)}>삭제</button>
+      </td>
+    </tr>
+  ))
+) : (
+  <tr>
+    <td colSpan="4">등록된 사용자가 없습니다.</td>
+  </tr>
+)}
           </tbody>
         </table>
         <div className="profile-actions">
