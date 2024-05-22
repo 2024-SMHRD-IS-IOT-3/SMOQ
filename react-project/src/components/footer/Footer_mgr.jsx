@@ -35,8 +35,8 @@ function Footermgr() {
           </Nav.Link>
 
           <Nav.Link
-            href="/MyInfo_user"
-            className={getNavLinkClass("/MyInfo_user")}
+            href="/MyInfo_mgr"
+            className={getNavLinkClass("/MyInfo_mgr")}
           >
             <div className="nav-item">
               <BsFillPersonFill className="nav-icon" />

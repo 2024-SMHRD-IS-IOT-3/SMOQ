@@ -18,6 +18,7 @@ const Journal = () => {
         const res = await axios.get("/journallist");
         if (res.data.success) {
           setJournalData(res.data.data);
+          console.log(res.data.data);
         } else {
           console.error("실패");
         }
@@ -71,6 +72,7 @@ const Journal = () => {
             content={item.content}
             initialLikes={item.likes}
             comments={item.comments}
+            writingUser={item.writingUser}
           />
         ))}
       </div>

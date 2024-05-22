@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import Header from "../header/Header";
 import Footer from "../footer/Footer";
 import axios from "../../axios";
@@ -11,6 +11,8 @@ import "./journal.css";
 
 const Journal_comment = () => {
   const { id } = useParams();
+  const location = useLocation();
+  const { writingUser } = location.state || {};
   const [postData, setPostData] = useState(null);
   const [comments, setComments] = useState([]);
   const [showCommentForm, setShowCommentForm] = useState(false);
@@ -57,8 +59,10 @@ const Journal_comment = () => {
   };
 
   const handleCommentSubmit = async () => {
-    const user = "22";
+    const user = writingUser;
     const date = new Date().toISOString().slice(0, 19).replace("T", " ");
+
+    console.log("comment", user, date);
 
     try {
       const res = await axios.post(`/post/${id}/comment`, {
@@ -79,6 +83,7 @@ const Journal_comment = () => {
       console.error("Error saving comment:", error);
     }
   };
+
   return (
     <div className="main-container">
       <Header />
@@ -135,20 +140,14 @@ const Journal_comment = () => {
           </div>
         )}
         <div className="comments-container">
-          {comments.map((comments, index) => (
+          {comments.map((comment, index) => (
             <div key={index} className="comment-item">
               <div className="comment-header">
-                <span className="comment-user">{comments.user}</span>
-                <span className="comment-date">{comments.date}</span>
-                {/* {sessionEmail === comment.userEmail && (
-                <>
-                  <button>수정</button>
-                  <button>삭제</button>
-                </>
-              )} */}
+                <span className="comment-user">{comment.user}</span>
+                <span className="comment-date">{comment.date}</span>
               </div>
               <div className="comment-content">
-                <p>{comments.content}</p>
+                <p>{comment.content}</p>
               </div>
             </div>
           ))}

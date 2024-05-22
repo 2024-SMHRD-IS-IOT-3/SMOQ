@@ -81,11 +81,11 @@ function App() {
         <Route path='/MyInfo_user_Feedback' element={<MyInfo_user_Feedback/>} />
 
         {/* 내정보-관리자 */}
-        <Route path='/MyInfo_user' element={<MyInfo_mgr/>} />
-        <Route path='/MyInfo_user_ProfileEdit' element={<MyInfo_mgr_ProfileEdit/>} />
-        <Route path='/MyInfo_user_PWEdit' element={<MyInfo_mgr_PWEdit/>} />
-        <Route path='/MyInfo_user_Device' element={<MyInfo_mgr_user/>} />
-        <Route path='/MyInfo_user_Feedback' element={<MyInfo_mgr_Feedback/>} />
+        <Route path='/MyInfo_mgr' element={<MyInfo_mgr/>} />
+        <Route path='/MyInfo_mgr_ProfileEdit' element={<MyInfo_mgr_ProfileEdit/>} />
+        <Route path='/MyInfo_mgr_PWEdit' element={<MyInfo_mgr_PWEdit/>} />
+        <Route path='/MyInfo_mgr_Device' element={<MyInfo_mgr_user/>} />
+        <Route path='/MyInfo_mgr_Feedback' element={<MyInfo_mgr_Feedback/>} />
       </Routes>
     </div>
   );
