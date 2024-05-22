@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import Header from "../header/Header";
+import Header_mgr from "../header/Header_mgr";
 import Footermgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
+import Headermgr from "../header/Header_mgr";
 
 const Feedback = () => {
   const [feedback, setFeedback] = useState({
@@ -43,7 +44,7 @@ const Feedback = () => {
 
   return (
     <div className="myinfo-container">
-      <Header />
+      <Header_mgr />
       <div className="myinfo-header">
         <h2>문의하기</h2>
       </div>

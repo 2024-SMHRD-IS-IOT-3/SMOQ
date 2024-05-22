@@ -204,7 +204,7 @@ router.post('/login', async (req, res) => {
         if (userType === 'personal') {
             sql = `SELECT USER_EMAIL, JOINED_AT FROM TB_USER WHERE USER_EMAIL = :email AND USER_PW = :password`;
         } else {
-            sql = `SELECT MGR_EMAIL, JOINED_AT FROM TB_MANAGER WHERE MGR_EMAIL = :email AND MGR_PW = :password`;
+            sql = `SELECT MGR_EMAIL, CREATED_AT FROM TB_MANAGER WHERE MGR_EMAIL = :email AND MGR_PW = :password`;
         }
         
         const params = { email, password };
@@ -748,7 +748,7 @@ router.post('/post/:id/comment', async (req, res) => {
     }
 });
 
-/** 게시글을 작성 */
+  /** 유저 프로필 가져오기 */
 router.post('/user-profile', async (req, res) => {
     const { email } = req.body;
     console.log('Fetching user profile with email:', email); // Add console log for email
@@ -783,37 +783,6 @@ router.post('/user-profile', async (req, res) => {
     }
 });
 
-  /** 유저 프로필 가져오기 */
-  router.post('/user-profile', async (req, res) => {
-    const { email } = req.body;
-    console.log(email);
-    try {
-        const connection = await db.connectToOracle();
-        console.log("user-profile");
-        // 사용자 정보를 가져오는 SQL 쿼리
-        const sql = `
-        SELECT USER_EMAIL, USER_NAME, USER_NICK, USER_BIRTHDATE, NVL(USER_SMOKE_CNT, 0) AS USER_SMOKE_CNT
-FROM TB_USER
-WHERE USER_EMAIL = :email;
-`;
-        
-        // SQL 쿼리 실행
-        const result = await connection.execute(sql, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-
-        await connection.close();
-        console.log(result.rows);
-        // 결과가 있는 경우 사용자 프로필 데이터를 응답으로 반환
-        if (result.rows.length > 0) {
-            const userProfile = result.rows[0];
-            res.json({ success: true, userProfile });
-        } else {
-            res.status(404).json({ success: false, message: '사용자를 찾을 수 없습니다.' });
-        }
-    } catch (error) {
-        console.error('사용자 프로필 가져오기 실패:', error);
-        res.status(500).json({ success: false, message: '사용자 프로필 가져오기 실패' });
-    }
-});
 
 /** 유저 프로필 수정 */
 router.post('/update-profile', async (req, res) => {

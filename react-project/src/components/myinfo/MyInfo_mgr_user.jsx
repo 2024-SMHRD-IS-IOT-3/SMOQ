@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../header/Header';
+import Header_mgr from '../header/Header_mgr';
 import Footermgr from '../footer/Footer_mgr';
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,7 @@ const Device = () => {
     const [searchTerm, setSearchTerm] = useState('');
 
     const users = [
-        { id: 1, deviceid: "lq2w3e4r", devicename: "SMOQ", signupDate: "24/05/06" },
+        { id: 1, birthdate: "lq2w3e4r", name: "SMOQ", joined_at: "24/05/06" },
         // Add more users as needed
     ];
 
@@ -17,12 +17,12 @@ const Device = () => {
 
     const navigate = useNavigate();
     const handleCancel = () => {
-        navigate("/MyInfo_user");
+        navigate("/MyInfo_mgr");
       };
 
     return (
         <div className='myinfo-container'>
-            <Header />
+            <Header_mgr />
             <div className='myinfo-header'>
                 <h2>등록 사용자 관리</h2>
             </div>
@@ -49,7 +49,7 @@ const Device = () => {
                         {users.map(user => (
                             <tr key={user.id}>
                                 <td>{user.deviceid}</td>
-                                <td>{user.devicename}</td>
+                                <td>{user.username}</td>
                                 <td>{user.signupDate}</td>
                                 <td><button>해제</button></td>
                             </tr>

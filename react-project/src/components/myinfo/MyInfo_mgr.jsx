@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../header/Header";
+import Header_mgr from "../header/Header_mgr";
 import Footermgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 
@@ -53,7 +53,7 @@ const MyInfo_mgr = () => {
 
   return (
     <div className="myinfo-container">
-      <Header />
+      <Header_mgr/>
         <div className='myinfo-body'>
           <p>기본정보</p>
           <button className='profile-button' onClick={handleProfileEdit}>프로필 변경</button>
