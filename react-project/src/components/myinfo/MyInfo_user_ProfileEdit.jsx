@@ -79,7 +79,7 @@ const ProfileEdit = () => {
       </div>
       <form onSubmit={handleSubmit} className="myinfo-body">
         <div className="form-group">
-          <label htmlFor="profilePicture">프로필 사진</label>
+          {/* <label htmlFor="profilePicture">프로필 사진</label>
           <div className="profile-image-section">
             <img
               src={profile.profilePicture}
@@ -89,7 +89,7 @@ const ProfileEdit = () => {
             <br></br>
             <button type="button">변경</button>
             <button type="button">삭제</button>
-          </div>
+          </div> */}
         </div>
         <div className="form-group">
           <label htmlFor="nickname">닉네임</label>
