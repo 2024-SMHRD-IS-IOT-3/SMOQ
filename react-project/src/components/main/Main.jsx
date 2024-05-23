@@ -60,7 +60,7 @@ const Main = () => {
           console.log("res", res.data);
           quitTimeStr = sessionStorage.getItem("joined_at");
         }
-
+        console.log("ssion", sessionStorage.getItem);
         const quitTimeDate = new Date(quitTimeStr);
         setQuitTime(quitTimeDate);
       });
@@ -94,7 +94,15 @@ const Main = () => {
         const nowHour = now.getHours();
         const nowMinute = now.getMinutes();
         const nowSecond = now.getSeconds();
-
+        console.log(
+          "현재시간",
+          nowYear,
+          nowMonth,
+          nowDay,
+          nowHour,
+          nowMinute,
+          nowSecond
+        );
         // 흡연 시간 년, 월, 일, 시, 분, 초
         const quitYear = quitTime.getUTCFullYear();
         const quitMonth = quitTime.getUTCMonth() + 1;
@@ -102,6 +110,15 @@ const Main = () => {
         const quitHour = quitTime.getUTCHours();
         const quitMinute = quitTime.getUTCMinutes();
         const quitSecond = quitTime.getUTCSeconds();
+        console.log(
+          "현재시간",
+          quitYear,
+          quitMonth,
+          quitDay,
+          quitHour,
+          quitMinute,
+          quitSecond
+        );
 
         // 현재 시간 - 흡연 시간
         let diffYear = nowYear - quitYear;
