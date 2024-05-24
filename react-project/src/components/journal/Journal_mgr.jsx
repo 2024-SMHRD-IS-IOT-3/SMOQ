@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../header/Header";
+import Header from "../header/Header_mgr";
 import JournalItem from "./JournalItem";
 import { IoSearch } from "react-icons/io5";
 import axios from "../../axios";

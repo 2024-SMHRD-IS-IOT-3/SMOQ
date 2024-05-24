@@ -360,10 +360,7 @@ svg {
   padding-bottom: 150px;
 }
 
-.first-container input[type="text"],
-.first-container input[type="date"],
-.first-container input[type="email"],
-.first-container input[type="password"] {
+.join-container>input[type="email"],  .join-container-check>input[type="password"], .join-container>input[type="text"], .join-container>input[type=number], .join-container>input[type="date"], #email, #authcode{
   max-width: 300px;
   width: 60%;
   padding: 10px; 

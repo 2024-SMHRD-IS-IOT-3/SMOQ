@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Header from "../header/Header";
+import Header from "../header/Header_mgr";
 import Footer_mgr from "../footer/Footer_mgr";
 import axios from "../../axios";
 import { FaHeart, FaComment } from "react-icons/fa";

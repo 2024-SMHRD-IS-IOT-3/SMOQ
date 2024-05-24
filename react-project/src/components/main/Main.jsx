@@ -10,6 +10,7 @@ const Main = () => {
   const [quitTime, setQuitTime] = useState(null); // 마지막 흡연 시간
   const [elapsedTime, setElapsedTime] = useState(""); // 금연 시간
   const [cntSmoke, setCntSmoke] = useState(0); // 흡연 개수
+  const [useLocalTime, setUseLocalTime] = useState(false); // 로컬 시간 사용 여부
 
   // 프로그레스바
   const [progress20Min, setProgress20Min] = useState(0);
@@ -53,14 +54,16 @@ const Main = () => {
       })
       .then((res) => {
         let quitTimeStr;
-        if (res.data && res.data.length > 0) {
-          quitTimeStr = res.data[0].SMOKE_TIME;
+        if (res.data && res.data.smoke_time) {
+          quitTimeStr = res.data.smoke_time;
           console.log("quitTime", quitTimeStr);
+          setUseLocalTime(false); // 디비에서 값을 받아오면 UTC로 계산
         } else {
           console.log("res", res.data);
           quitTimeStr = sessionStorage.getItem("joined_at");
+          setUseLocalTime(true); // 데이터가 없을 경우 로컬 시간으로 계산
         }
-
+        console.log("session", sessionStorage.getItem("joined_at"));
         const quitTimeDate = new Date(quitTimeStr);
         setQuitTime(quitTimeDate);
       });
@@ -74,7 +77,9 @@ const Main = () => {
       .then((res) => {
         const cnt = res.data <= 0 ? Math.abs(res.data) : res.data;
         setCntSmoke(cnt.toFixed(1));
-        setHow(cnt <= 0 ? "더 피움" : "적게 핌");
+        setHow(res.data >= 0 ? "더 피움" : "적게 핌");
+        console.log("cnt", cnt)
+        console.log("res.data",res.data)
       })
       .catch((err) => {
         console.error("흡연 카운트 조회 오류:", err);
@@ -94,14 +99,43 @@ const Main = () => {
         const nowHour = now.getHours();
         const nowMinute = now.getMinutes();
         const nowSecond = now.getSeconds();
-
-        // 흡연 시간 년, 월, 일, 시, 분, 초
-        const quitYear = quitTime.getUTCFullYear();
-        const quitMonth = quitTime.getUTCMonth() + 1;
-        const quitDay = quitTime.getUTCDate();
-        const quitHour = quitTime.getUTCHours();
-        const quitMinute = quitTime.getUTCMinutes();
-        const quitSecond = quitTime.getUTCSeconds();
+        console.log(
+          "현재시간",
+          nowYear,
+          nowMonth,
+          nowDay,
+          nowHour,
+          nowMinute,
+          nowSecond
+        );
+        console.log(quitTime);
+        let quitYear, quitMonth, quitDay, quitHour, quitMinute, quitSecond;
+        if (useLocalTime) {
+          // 로컬 시간
+          quitYear = quitTime.getFullYear();
+          quitMonth = quitTime.getMonth() + 1;
+          quitDay = quitTime.getDate();
+          quitHour = quitTime.getHours();
+          quitMinute = quitTime.getMinutes();
+          quitSecond = quitTime.getSeconds();
+        } else {
+          // UTC 시간
+          quitYear = quitTime.getUTCFullYear();
+          quitMonth = quitTime.getUTCMonth() + 1;
+          quitDay = quitTime.getUTCDate();
+          quitHour = quitTime.getUTCHours();
+          quitMinute = quitTime.getUTCMinutes();
+          quitSecond = quitTime.getUTCSeconds();
+        }
+        console.log(
+          "흡연시간",
+          quitYear,
+          quitMonth,
+          quitDay,
+          quitHour,
+          quitMinute,
+          quitSecond
+        );
 
         // 현재 시간 - 흡연 시간
         let diffYear = nowYear - quitYear;

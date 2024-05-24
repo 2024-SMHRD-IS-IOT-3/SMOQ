@@ -92,6 +92,7 @@ function User() {
       <div className="device-content">
         <div className="add-user-section">
           <input
+            className="myinput"
             type="email"
             value={newUserEmail}
             onChange={handleNewUserEmailChange}

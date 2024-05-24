@@ -25,18 +25,19 @@ const Resign = () => {
     event.preventDefault();
     console.log("Submitted feedback:", feedback);
 
-    try {
-      const res = await axios.post("/sendFeedback", feedback);
-    } catch (error) {
-      console.error("Error sending feedback:", error);
-      alert("전송 에러");
-    }
+    // try {
+    //   const res = await axios.post("/sendFeedback", feedback);
+    // } catch (error) {
+    //   console.error("Error sending feedback:", error);
+    //   alert("전송 에러");
+    // }
     // 
     try {
+      console.log("a")
       const email = sessionStorage.getItem("email");
       console.log(email);
       const response = await axios.post("/resign", { email });
-
+      console.log("res",response.data.success)
       if (response.data.success) {
         console.log("ab");
         sessionStorage.removeItem("email");

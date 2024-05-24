@@ -64,6 +64,7 @@ const ProfileEdit = () => {
         email: profile.email,
         newNickname: profile.nickname,
       });
+      alert("변경 완료");
 
       console.log(res.data); // 서버 응답 로그
     } catch (error) {

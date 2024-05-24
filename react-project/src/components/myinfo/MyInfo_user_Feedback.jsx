@@ -28,7 +28,7 @@ const Feedback = () => {
     try {
       const res = await axios.post("/sendFeedback", feedback);
       if (res.data.success) {
-        alert("문의 완료");
+        
       } else {
         alert("문의 실패");
       }

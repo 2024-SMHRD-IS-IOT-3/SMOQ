@@ -15,32 +15,41 @@ router.get('/', (req, res) => {
 
 /** 최근 흡연 시간을 가져오는 경로 */
 router.post('/selectsmokingtime', async (req, res) => {
-
     let { email } = req.body;
-    console.log("email",email)
+    console.log("email", email);
     try {
         const connection = await db.connectToOracle();
-        const sql = `SELECT TO_CHAR(smoke_time, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') as smoke_time
-                     FROM tb_smoking_sensor a
-                     where user_email = :email
-                     and a.sensor_idx = (select max(sensor_idx)
-                                           from tb_smoking_sensor where user_email = :email )`;
+        
+        // 흡연 시간 가져오기
+        const sqlSmokingTime = `SELECT TO_CHAR(smoke_time, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') as smoke_time
+                                FROM tb_smoking_sensor a
+                                WHERE user_email = :email
+                                  AND a.sensor_idx = (SELECT MAX(sensor_idx)
+                                                      FROM tb_smoking_sensor 
+                                                      WHERE user_email = :email)`;
+        const resultSmokingTime = await connection.execute(sqlSmokingTime, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
+        if (resultSmokingTime.rows.length > 0) {
+            const smokingTime = resultSmokingTime.rows[0].SMOKE_TIME;
+            console.log("smokingTime", smokingTime);
+            res.send({ smoke_time: smokingTime });
+        } else {
+            // joined_at 가져오기
+            const sqlJoinedAt = `SELECT TO_CHAR(joined_at, 'YYYY-MM-DD"T"HH24:MI:SS"Z"') as joined_at
+                                 FROM tb_user
+                                 WHERE user_email = :email`;
+            const resultJoinedAt = await connection.execute(sqlJoinedAt, [email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
 
-        oracledb.fetchAsString = [oracledb.DATE];
-        const result = await connection.execute(sql, [email, email], { outFormat: oracledb.OUT_FORMAT_OBJECT });
-        console.log(result)
-       
-            result.rows.forEach(row => {
-                const dateStr = row.SMOKE_TIME; 
-                const date = new Date(dateStr);
-              });  
+            if (resultJoinedAt.rows.length > 0) {
+                const joinedAt = resultJoinedAt.rows[0].JOINED_AT;
+                console.log("joinedAt", joinedAt);
+                res.send({ smoke_time: joinedAt });
+            } else {
+                res.status(404).json({ error: 'User not found' });
+            }
+        }
 
-      
         await connection.close();
-
-        res.send(result.rows);
-
     } catch (err) {
         console.error('Error executing query:', err);
         res.status(500).json({ error: 'Internal Server Error' });
@@ -58,24 +67,33 @@ router.post('/selectsmokingcnt', async (req, res) => {
         // 평균 흡연 개수
         const averageResult = await connection.execute(
             `WITH smoke_counts AS (
-            SELECT COUNT(*) AS count
-            FROM tb_smoking_sensor
-            WHERE user_email = :email
-            GROUP BY TRUNC(TO_DATE(smoke_date, 'YYYY-MM-DD'))
+                SELECT
+                    COUNT(*) AS count,
+                    TRUNC(TO_DATE(smoke_date, 'YY-MM-DD')) AS date_truncated
+                FROM
+                    tb_smoking_sensor
+                WHERE
+                    user_email = :email
+                    AND TO_DATE(smoke_date, 'YY-MM-DD') < TRUNC(SYSDATE)
+                GROUP BY
+                    TRUNC(TO_DATE(smoke_date, 'YY-MM-DD'))
             )
-            SELECT AVG(count) AS average
-            FROM smoke_counts`, [email]
+            SELECT
+                AVG(count) AS average
+            FROM
+                smoke_counts`, [email]
         );
-  
+        console.log("averageResult",averageResult)
         const averageCount = averageResult.rows.length > 0 ? averageResult.rows[0][0] : 0;
+        console.log(averageCount)
     
         // 오늘 흡연 개수
         const todayResult = await connection.execute(
             `SELECT COUNT(*) AS count
             FROM tb_smoking_sensor
-            WHERE user_email = :email AND TRUNC(TO_DATE(smoke_date, 'YYYY-MM-DD')) = TRUNC(SYSDATE)`, [email]
+            WHERE user_email = :email AND TRUNC(TO_DATE(smoke_date, 'YY-MM-DD')) = TRUNC(SYSDATE)`, [email]
         );
-    
+        console.log("todayResult",todayResult.rows)
         const todayCount = todayResult.rows.length > 0 ? todayResult.rows[0][0] : 0;
     
         // count = 오늘 흡연 개수 - 평균 흡연 개수
@@ -234,18 +252,69 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// /** user 이메일 찾기 */
+// router.post('/find-useremail', async (req, res) => {
+//     const { name, birthDate } = req.body;
+
+//     try {
+//         const connection = await db.connectToOracle();
+        
+//         // Convert birthDate to a Date object
+//         const parsedBirthDate = new Date(birthDate);
+        
+//         // Get the month abbreviation (e.g., 'May')
+//         const monthAbbreviation = parsedBirthDate.toLocaleString('en-US', { month: 'short' });
+        
+//         // Format the date in a way Oracle understands ('dd-MON-yy')
+//         const formattedDate = `${parsedBirthDate.getDate()}-${monthAbbreviation.toUpperCase()}-${parsedBirthDate.getFullYear() % 100}`;
+        
+//         console.log(formattedDate);
+        
+//         const sql = `SELECT USER_NAME, USER_BIRTHDATE FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :formattedDate`;
+        
+//         // Execute the query with the formatted date
+//         const result = await connection.execute(sql, { name, formattedDate }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+//         await connection.close();
+
+//         if (result.rows.length > 0) {
+//             res.json({ success: true, email: result.rows[0].USER_EMAIL });
+//         } else {
+//             res.json({ success: false, message: '일치하는 사용자를 찾을 수 없습니다.' });
+//         }
+//     } catch (error) {
+//         console.error('이메일 찾기 실패:', error);
+//         res.status(500).json({ success: false, message: '이메일 찾기 실패' });
+//     }
+// });
+
 /** user 이메일 찾기 */
 router.post('/find-useremail', async (req, res) => {
     const { name, birthDate } = req.body;
 
+    let connection;
+
     try {
-        const connection = await db.connectToOracle();
-        const sql = `SELECT USER_EMAIL FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = :birthDate`;
-        const params = { name, birthDate };
+        connection = await db.connectToOracle();
+        
+        // Convert birthDate to a Date object
+        const parsedBirthDate = new Date(birthDate);
+        
+        // Format the date in 'DD-MON-YYYY' format
+        const day = parsedBirthDate.getDate().toString().padStart(2, '0');
+        const month = parsedBirthDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const year = parsedBirthDate.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
 
-        const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        console.log(`Formatted Date: ${formattedDate}`);
+        
+        const sql = `SELECT USER_EMAIL FROM TB_USER WHERE USER_NAME = :name AND USER_BIRTHDATE = TO_DATE(:birthDate, 'DD-MON-YYYY')`;
 
-        await connection.close();
+        // Execute the query with the formatted date
+        console.log(`Executing SQL: ${sql} with parameters name: ${name}, birthDate: ${formattedDate}`);
+        const result = await connection.execute(sql, { name, birthDate: formattedDate }, { outFormat: oracledb.OUT_FORMAT_OBJECT });
+
+        console.log('Query Result:', result);
 
         if (result.rows.length > 0) {
             res.json({ success: true, email: result.rows[0].USER_EMAIL });
@@ -255,8 +324,18 @@ router.post('/find-useremail', async (req, res) => {
     } catch (error) {
         console.error('이메일 찾기 실패:', error);
         res.status(500).json({ success: false, message: '이메일 찾기 실패' });
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeError) {
+                console.error('Failed to close connection:', closeError);
+            }
+        }
     }
 });
+
+
 
 /** manager 이메일 찾기 */
 router.post('/find-manageremail', async (req, res) => {
@@ -283,24 +362,53 @@ router.post('/find-manageremail', async (req, res) => {
 });
 
 /** user 임시 비밀번호 발송 */
+
+
+
+
+/** user 임시 비밀번호 발송 */
 router.post('/send-userpw', async (req, res) => {
+    // Function to generate a random code for the temporary password
+const generateRandomCode = () => {
+    return Math.random().toString(36).slice(-8); // Example: generate an 8-character random string
+    };
+    // Function to send an email (dummy implementation, replace with actual implementation)
+    const sendEmail = async (to, subject, text) => {
+    // Replace with your email sending logic
+    console.log(`Sending email to: ${to}, Subject: ${subject}, Text: ${text}`);
+    return Promise.resolve();
+    };
+
     const { email, name, birthDate } = req.body;
     const code = generateRandomCode();
-    console.log("postsendmails")
+    console.log("postsendmails");
+    let connection;
+
     try {
-        const connection = await db.connectToOracle();
+        connection = await db.connectToOracle();
+
+        // Convert birthDate to a Date object
+        const parsedBirthDate = new Date(birthDate);
+        
+        // Format the date in 'DD-MON-YYYY' format
+        const day = parsedBirthDate.getDate().toString().padStart(2, '0');
+        const month = parsedBirthDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const year = parsedBirthDate.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+        
+        console.log(`Formatted Date: ${formattedDate}`);
+
         const sql = `UPDATE TB_USER
                      SET USER_PW = :code
-                     WHERE USER_EMAIL = :email AND USER_NAME = :name AND USER_BIRTHDATE = :birthDate`;
+                     WHERE USER_EMAIL = :email AND USER_NAME = :name AND USER_BIRTHDATE = TO_DATE(:birthDate, 'DD-MON-YYYY')`;
         
-        const params = { code, email, name, birthDate };
+        const params = { code, email, name, birthDate: formattedDate };
         
         const result = await connection.execute(sql, params, { autoCommit: true });
-        await connection.close();
 
         if (result.rowsAffected > 0) {
             await sendEmail(email, 'SMOQ', `임시 비밀번호: ${code}`);
-            console.log("success", code)
+            console.log("success", code);
             res.json({ success: true, message: '임시 비밀번호가 이메일로 전송되었습니다.' });
         } else {
             res.json({ success: false, message: '일치하는 사용자를 찾을 수 없습니다.' });
@@ -308,6 +416,14 @@ router.post('/send-userpw', async (req, res) => {
     } catch (error) {
         console.error("Failed to send email:", error);
         res.status(500).json({ success: false, message: '코드 전송 실패', error: error.message });
+    } finally {
+        if (connection) {
+            try {
+                await connection.close();
+            } catch (closeError) {
+                console.error('Failed to close connection:', closeError);
+            }
+        }
     }
 });
 
@@ -388,7 +504,9 @@ router.get('/all-users', async (req, res) => {
                              FROM TB_MANAGEMENT
                              WHERE MGR_ID = :sessionMgrEmail)`;
 
+
         const result = await connection.execute(sql, [sessionMgrEmail], { outFormat: oracledb.OUT_FORMAT_OBJECT });
+        console.log(result)
         await connection.close();
 
         if (result.rows.length > 0) {
@@ -1143,7 +1261,6 @@ router.post('/resign', async (req, res) => {
       connection = await db.connectToOracle();
   
       await connection.execute('SET TRANSACTION ISOLATION LEVEL SERIALIZABLE');
-  
       const result1 = await connection.execute(
         'DELETE FROM TB_SMOKING_SENSOR WHERE USER_EMAIL = :email',
         { email }
@@ -1190,6 +1307,8 @@ router.post('/resign', async (req, res) => {
       await connection.commit();
       console.log("DD")
       console.log(result)
+
+      console.log("use", res)
       res.status(200).json({ success: true, message: '회원 탈퇴가 성공적으로 처리되었습니다.' });
     } catch (error) {
       if (connection) {

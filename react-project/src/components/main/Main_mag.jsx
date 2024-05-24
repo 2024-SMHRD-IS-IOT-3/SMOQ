@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Footermgr from "../footer/Footer_mgr";
-import Header from "../header/Header";
+import Header from "../header/Header_mgr";
 import axios from "../../axios";
 import { useNavigate } from "react-router-dom";
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Header from "../header/Header";
+import Header from "../header/Header_mgr";
 import axios from "../../axios";
 import { useLocation } from "react-router-dom";
 import Footermgr from "../footer/Footer_mgr";
