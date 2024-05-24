@@ -228,7 +228,7 @@ router.post('/login', async (req, res) => {
         const params = { email, password };
 
         const result = await connection.execute(sql, params, { outFormat: oracledb.OUT_FORMAT_OBJECT });
-
+        console.log(result)
         
 
         if (result.rows.length > 0) {

@@ -4,7 +4,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { FaKey } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "../../axios";
-import logo from '../../assets/logo.png'
+import logo from "../../assets/logo.png";
 
 const First = () => {
   const [view, setView] = useState("main");
@@ -69,6 +69,7 @@ const First = () => {
         } else {
           alert(res.data.message);
         }
+        console.log("서버 응답:", res.data);
       })
       .catch((error) => {
         console.error("로그인 실패:", error);
@@ -97,7 +98,7 @@ const First = () => {
       {view === "main" && (
         <>
           <div className="first-title">
-            <img src={logo} id="logo"/>
+            <img src={logo} id="logo" />
           </div>
           <Button
             variant="secondary"
