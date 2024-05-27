@@ -74,11 +74,17 @@
         </td>
     </tr>
 </table>
+<br>
 
+## ⛏ 개발환경
+<br>
 
+## ⛏ 회로 구성도
+![image](https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/150112222/75f5c5aa-643c-4110-b5e0-900ef87fb67a)
 <br>
 
 ## ⚙ 시스템 아키텍처(구조)
+![image](https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/150112222/5a42191f-54c8-43d9-91d4-eb89d6ca3576)
 <br>
 
 ## 📌 SW유스케이스
@@ -88,7 +94,12 @@
 <br>
 
 ## 📌 ER다이어그램
+![ERD](https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/150112222/ea9015bb-f95f-470b-9c9e-9c5aa74eb5ae)
 <br>
+
+
+
+
 
 ## 🖥 화면 구성
 
@@ -110,31 +121,28 @@
     <td align="center"><img src="https://i.pinimg.com/236x/ed/bb/53/edbb53d4f6dd710431c1140551404af9.jpg" width="100" height="100"/></td>
   </tr>
   <tr>
-    <td align="center"><strong>홍O동</strong></td>
-    <td align="center"><strong>홍O동</strong></td>
-    <td align="center"><strong>홍O동</strong></td>
-    <td align="center"><strong>홍O동</strong></td>
+    <td align="center"><strong>임동원</strong></td>
+    <td align="center"><strong>주영빈</strong></td>
+    <td align="center"><strong>김가연</strong></td>
+    <td align="center"><strong>박태하</strong></td>
   </tr>
   <tr>
+    <td align="center"><b>Frontend, Backend</b></td>
+    <td align="center"><b>Hardware</b></td>
+    <td align="center"><b>Frontend, Backend</b></td>
     <td align="center"><b>Frontend</b></td>
-    <td align="center"><b>Frontend</b></td>
-    <td align="center"><b>Backend</b></td>
-    <td align="center"><b>Backend</b></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
     <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/yeon820" target='_blank'>github</a></td>
     <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
   </tr>
 </table>
 
 ## 🤾‍♂️ 트러블슈팅
-개념: 문제 해결을 위해 문제의 원인을 논리적이고 체계적으로 찾는 일이며 제품이나 프로세스의 운영을 재개
-프로젝트 진행하는 동안 발생했던 이슈 중 가장 기억에 남았던 문제와 해결 프로세스 나열(2~5가지 정도)
   
 * 문제1<br>
- 문제점 설명 및 해결방안
- 
-* 문제2<br>
- 문제점 설명 및 해결방안
+ - 문제점 : 블루투스 통신과 GPS모듈(NEO-6M)을 같이 사용하면 GPS값만 출력하고 블루투스 주소값은 출력하지 않음
+ - 원인 : esp32 c3보드에 시리얼 포트가 하나만 존재해서 발생
+ - 해결방안 : 블루투스 통신 대신 WIFI 통신 사용
