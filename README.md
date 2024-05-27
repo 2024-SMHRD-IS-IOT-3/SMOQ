@@ -77,10 +77,10 @@
 <br>
 
 ## ⛏ 개발환경
-▪ Arduindo IDE 2.3.2
-  ▫ ESP32C3 Dev Module board
-▪ ESP32-C3-DevkitM-1
- ▫ ESP32-C3-MINI-1
+▪ Arduindo IDE 2.3.2<br>
+ ▫ ESP32C3 Dev Module board<br>
+▪ ESP32-C3-DevkitM-1<br>
+ ▫ ESP32-C3-MINI-1<br>
  ▫ ESP32-C3FN4
 
 ▪ MQ-2 (pp-A205)
