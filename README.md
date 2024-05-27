@@ -77,11 +77,14 @@
 <br>
 
 ## ⛏ 개발환경
+▪ Node.js 20.12.0<br>
+▪ React 18.3.1<br>
 ▪ Arduindo IDE 2.3.2<br>
- ▫ ESP32C3 Dev Module board<br>
+  ▫ ESP32C3 Dev Module board<br>
 ▪ ESP32-C3-DevkitM-1<br>
  ▫ ESP32-C3-MINI-1<br>
  ▫ ESP32-C3FN4<br>
+<br>
 ▪ MQ-2 (pp-A205)<br>
  ▫ ZYMQ-2 sensor<br>
  ▫ LM393<br>
