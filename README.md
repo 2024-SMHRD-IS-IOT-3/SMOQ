@@ -81,19 +81,18 @@
  ▫ ESP32C3 Dev Module board<br>
 ▪ ESP32-C3-DevkitM-1<br>
  ▫ ESP32-C3-MINI-1<br>
- ▫ ESP32-C3FN4
-
-▪ MQ-2 (pp-A205)
- ▫ ZYMQ-2 sensor
- ▫ LM393
-▪ MQ-7(SZH-SSBH-097)
- ▫ ZYMQ-7 sensor
- ▫  LM393
-▪ MQ-135(SZH-SSBH-038)
- ▫ ZYMQ-135 sensor
- ▫  LM393
-▪ NEO-6M(GY-GPS6MV2)
- ▫ NEO-6M
+ ▫ ESP32-C3FN4<br>
+▪ MQ-2 (pp-A205)<br>
+ ▫ ZYMQ-2 sensor<br>
+ ▫ LM393<br>
+▪ MQ-7(SZH-SSBH-097)<br>
+ ▫ ZYMQ-7 sensor<br>
+ ▫  LM393<br>
+▪ MQ-135(SZH-SSBH-038)<br>
+ ▫ ZYMQ-135 sensor<br>
+ ▫  LM393<br>
+▪ NEO-6M(GY-GPS6MV2)<br>
+ ▫ NEO-6M<br>
 
 <br>
 
