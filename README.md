@@ -116,7 +116,8 @@
 <br>
 
 ## 📌 서비스 흐름도
-![image](https://user-images.githubusercontent.com/25995055/178401048-d6484bda-a2d7-40e1-998b-2bd195cd9f89.png)
+![flow](https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/131474134/3d28d5aa-0076-4363-a10e-5bea1a59e9ef)
+
 <br>
 
 ## 📌 ER다이어그램
