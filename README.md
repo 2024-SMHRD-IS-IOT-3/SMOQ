@@ -169,7 +169,7 @@
     <td align="center"><a href="https://github.com/dd0nw" target='_blank'>github</a></td>
     <td align="center"><a href="https://github.com/yb1882" target='_blank'>github</a></td>
     <td align="center"><a href="https://github.com/yeon820" target='_blank'>github</a></td>
-    <td align="center"><a href="https://github.com/자신의username작성해주세요" target='_blank'>github</a></td>
+    <td align="center"><a href="https://github.com/SAMTAEGUEK" target='_blank'>github</a></td>
   </tr>
 </table>
 
