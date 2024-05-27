@@ -130,7 +130,6 @@
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/751131f4-5153-4acd-a18a-9a55f7a336a2" width="320" height="350">
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/23b16dd4-0768-4e09-818e-f413952c7c31" width="320" height="350">
 
-
 ### 회원정보/회원정보수정/회원탈퇴
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/1a27e844-829d-497c-9b1e-3abbdded9c57" width="320" height="350">
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/1405c29b-d40b-4879-b436-57f26ae6c14d" width="320" height="350">
@@ -142,7 +141,7 @@
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/b4edc79d-df02-4550-a907-74d2bcdf5d79" width="320" height="350">
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/9f6f0cac-db8b-417a-9c51-79770b1d6880" width="320" height="350">
 
-### 관리자 메인페이지/관리페이지/장소페이지
+### 관리자 메인페이지/관리페이지
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/5f69f267-7318-408d-83ac-23255677fc61" width="320" height="350">
 <img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/f9439f91-b23f-4998-94f9-2d1c4dc15ba0" width="320" height="350">
 
