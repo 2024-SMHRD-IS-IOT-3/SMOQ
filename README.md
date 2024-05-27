@@ -80,26 +80,21 @@
 ▪ Node.js 20.12.0<br>
 ▪ React 18.3.1<br>
 ▪ Arduindo IDE 2.3.2<br>
-▫ ESP32C3 Dev Module board<br>
-<br>
+    ▫ ESP32C3 Dev Module board<br>
 ▪ ESP32-C3-DevkitM-1<br>
-▫ ESP32-C3-MINI-1<br>
-▫ ESP32-C3FN4<br>
-<br>
+    ▫ ESP32-C3-MINI-1<br>
+    ▫ ESP32-C3FN4<br>
 ▪ MQ-2 (pp-A205)<br>
- ▫ ZYMQ-2 sensor<br>
- ▫ LM393<br>
- <br>
+    ▫ ZYMQ-2 sensor<br>
+    ▫ LM393<br><br>
 ▪ MQ-7(SZH-SSBH-097)<br>
- ▫ ZYMQ-7 sensor<br>
- ▫  LM393<br>
- <br>
+    ▫ ZYMQ-7 sensor<br>
+    ▫  LM393<br>
 ▪ MQ-135(SZH-SSBH-038)<br>
- ▫ ZYMQ-135 sensor<br>
- ▫  LM393<br>
- <br>
+    ▫ ZYMQ-135 sensor<br>
+    ▫  LM393<br><br>
 ▪ NEO-6M(GY-GPS6MV2)<br>
- ▫ NEO-6M<br>
+    ▫ NEO-6M<br>
 
 <br>
 
