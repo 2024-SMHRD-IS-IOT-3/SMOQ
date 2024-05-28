@@ -10,6 +10,7 @@
 ## 📅 프로젝트 기간
 2024.04.11 ~ 2024.05.24 (7주)
 <br>
+<br>
 
 ## ⭐ 주요 기능
 * 일산화탄소 센서, 가연성 가스 센서, 공기질 센서를 통한 흡연 감지
@@ -80,7 +81,7 @@
 ## ⛏ 개발환경
 + Node.js 20.12.0<br>
 + React 18.3.1<br>
-+ Arduindo IDE 2.3.2<br>
++ Arduino IDE 2.3.2<br>
     + ESP32C3 Dev Module board<br>
 + ESP32-C3-DevkitM-1<br>
     + ESP32-C3-MINI-1<br>
