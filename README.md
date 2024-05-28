@@ -42,6 +42,7 @@
             <img src="https://img.shields.io/badge/Axios-007CE2?style=for-the-badge&logo=axios&logoColor=white" >
             <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white" >
             <img src="https://img.shields.io/badge/KakaoMap-FFCD00?style=for-the-badge&logo=Kakao&logoColor=white"/>
+            <img src="https://img.shields.io/badge/Google-4285F4?style=for-the-badge&logo=Google&logoColor=white"/>
         </td>
     </tr>
     <tr>
