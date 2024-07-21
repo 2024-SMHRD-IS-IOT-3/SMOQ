@@ -127,25 +127,27 @@
 
 ## 🖥 화면 구성
 
-### 로그인/회원가입/회원가입폼
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/1bec7c2c-4037-4b86-885b-168e20f41985" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/751131f4-5153-4acd-a18a-9a55f7a336a2" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/23b16dd4-0768-4e09-818e-f413952c7c31" width="320" height="350">
+### 로그인 / 회원가입
+![image](https://github.com/user-attachments/assets/8899e882-8246-4698-a6ae-79ba9d45bc0e)
+![image](https://github.com/user-attachments/assets/d70c84c7-821d-45e3-925c-63e921dbbcb9)
 
-### 회원정보/회원정보수정/회원탈퇴
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/1a27e844-829d-497c-9b1e-3abbdded9c57" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/1405c29b-d40b-4879-b436-57f26ae6c14d" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/514023c7-fc7e-4158-9cec-aa8a33bd9066" width="320" height="350">
+### 사용자 메인페이지 / 기록페이지 / 그래프페이지 / 장소페이지
+![image](https://github.com/user-attachments/assets/0d366c78-e0d0-4db0-bdf0-a478ba6be20a)
 
-### 사용자 메인페이지/기록페이지/그래프페이지/장소페이지
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/a6e7ffff-203c-47b2-8f62-81bb9c16303e" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/a5b9c5e9-6795-49cb-82ad-503633b00774" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/b4edc79d-df02-4550-a907-74d2bcdf5d79" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/9f6f0cac-db8b-417a-9c51-79770b1d6880" width="320" height="350">
 
 ### 관리자 메인페이지/관리페이지
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/5f69f267-7318-408d-83ac-23255677fc61" width="320" height="350">
-<img src="https://github.com/2024-SMHRD-IS-IOT-3/SMOQ/assets/167970382/f9439f91-b23f-4998-94f9-2d1c4dc15ba0" width="320" height="350">
+![image](https://github.com/user-attachments/assets/d37706dd-02be-460f-841b-98738cdd1ad9)
+
+
+### 저널 페이지
+![image](https://github.com/user-attachments/assets/e0a12b30-ec3a-4305-ba55-99fec5ce1298)
+
+
+### 회원정보/회원정보수정/회원탈퇴
+![image](https://github.com/user-attachments/assets/9ee43035-8154-4e21-9356-9493e01b8daf)
+![image](https://github.com/user-attachments/assets/de708a54-0bda-4c25-acb7-cbf754e01e5f)
+
+
 
 ## 👨‍👩‍👦‍👦 팀원 역할
 <table>
