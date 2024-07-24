@@ -166,7 +166,15 @@
   <tr>
     <td align="center"><b>Frontend, Backend</b></td>
     <td align="center"><b>Hardware</b></td>
-    <td align="center"><b>Frontend, Backend</b></td>
+    <td align="center">
+        <b>- 회원가입, 로그인 페이지 제작<br>
+           - 사용자. 관리자 메인 페이지 제작<br>
+           - 사용자의 금연 시간별 프로세스 바 제작<br>
+           - DB 설계 / 구축<br>
+           - 관리자가 사용자 조회할 수 있는 페이지<br>
+           - 메일 전송을 통한 문의하기<br>
+           - 로그인 인증</b>
+    </td>
     <td align="center"><b>Frontend</b></td>
   </tr>
   <tr>
