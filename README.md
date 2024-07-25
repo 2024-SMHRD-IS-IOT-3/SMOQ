@@ -164,7 +164,12 @@
     <td align="center"><strong>박태하</strong></td>
   </tr>
   <tr>
-    <td align="center"><b>Frontend, Backend</b></td>
+    <td align="center"><b>
+        프로젝트 총괄<br>
+기록, 장소 페이지 제작<br>
+캘린더, 그래프 제작<br>
+구글맵 API를 활용한 지오코딩
+    </b></td>
     <td align="center"><b>Hardware</b></td>
     <td align="center">
         <b>- 회원가입, 로그인 페이지 제작<br>
