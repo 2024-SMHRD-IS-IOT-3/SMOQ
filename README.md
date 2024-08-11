@@ -170,7 +170,11 @@
 캘린더, 그래프 제작<br>
 구글맵 API를 활용한 지오코딩
     </b></td>
-    <td align="center"><b>Hardware</b></td>
+    <td align="center">
+        <b> - 센서를 통한 데이터 수집<br>
+            - <br>
+            - <br>
+        </b></td>
     <td align="center">
         <b>- 회원가입, 로그인 페이지 제작<br>
            - 사용자. 관리자 메인 페이지 제작<br>
