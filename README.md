@@ -171,9 +171,12 @@
 구글맵 API를 활용한 지오코딩
     </b></td>
     <td align="center">
-        <b> - 센서를 통한 데이터 수집<br>
-            - <br>
-            - <br>
+        <b> - 제폼 회로 구성 및 제작<br>
+            - 무선통신 환경 구축<br>
+            - 센싱 데이터 Calibration<br>
+            - Flask 서버-DB 연동<br>
+            - 사용자, 관리자 마이 페이지 제작<br>
+            - 화원 탈퇴 페이지 제작<br>
         </b></td>
     <td align="center">
         <b>- 회원가입, 로그인 페이지 제작<br>
